@@ -1,0 +1,19 @@
+/* css/login.css */
+
+/* Keep forms readable even in bare mode */
+html.opuc-bare .usus,
+html.opuc-bare .permuspas,
+html.opuc-bare input[type="text"],
+html.opuc-bare input[type="password"],
+html.opuc-bare input[type="submit"] {
+  border: 1px solid #ddd !important;
+  padding: 6px 8px !important;
+  background: #fff !important;
+}
+
+/* Space blocks a bit */
+html.opuc-bare .uspas,
+html.opuc-bare .uspaskukis,
+html.opuc-bare .newuspas {
+  margin: 6px 0 !important;
+}

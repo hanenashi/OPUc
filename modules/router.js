@@ -29,7 +29,11 @@
   O.time('router:enter');
 
   const tasks = [];
-  if (route === 'uploader') {
+  if (route === 'login') {
+    tasks.push(loadCSS('css/login.css'), loadJS('modules/login.js'));
+  } else if (route === 'register') {
+    tasks.push(loadCSS('css/login.css'), loadJS('modules/login.js')); // reuse minimal helpers for now
+  } else if (route === 'uploader') {
     tasks.push(loadCSS('css/uploader.css'), loadJS('modules/uploader.js'));
   } else if (route === 'gallery') {
     tasks.push(loadCSS('css/gallery.css'), loadJS('modules/gallery.js'));

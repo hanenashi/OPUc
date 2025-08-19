@@ -4,6 +4,20 @@ All notable changes to **OPUc** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+
+---
+
+
+## [0.2.6] - 2025-08-19
+### Added
+- New route: `?page=prihlaseni` (login) — recognized and handled.
+- `modules/login.js`: autofocus email, remember last email locally, default for “Přihlásit trvale?” stored in OPUc settings.
+- `css/login.css`: minimal readability helpers (safe under bare mode).
+
+### Changed
+- Route resolution order updated to include `login` and `register` before uploader.
+
+
 ---
 
 ## [0.2.5] - 2025-08-19

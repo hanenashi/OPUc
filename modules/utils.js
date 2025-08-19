@@ -31,41 +31,32 @@
   O.saveSettings = (obj) => localStorage.setItem(SKEY, JSON.stringify(obj || {}));
   O.set = (patch) => { const cur = O.getSettings(); O.saveSettings({ ...cur, ...patch }); return O.getSettings(); };
 
-  // ---------- Route detection (robust) ----------
+  // ---------- Route detection ----------
   const params = new URLSearchParams(location.search);
   const hasPage = params.has('page');
   const pageVal = (params.get('page') || '').toLowerCase();
 
   O.route = {
+    atLogin()       { return pageVal === 'prihlaseni' || !!document.querySelector('form [name="tl_prihlasit"]'); },
+    atRegister()    { return pageVal === 'registrace'; },
+    atGallery()     { if (pageVal === 'userpanel') return true; return !!document.querySelector('.box-wrap, .inbox-wrap, img.inbox, a.inbox'); },
+    atSettings()    { if (pageVal === 'settings') return true; return !!document.querySelector('.ussetmain, form[action*="settings"]'); },
+    atRelace()      { if (pageVal === 'relace') return true; return !!document.querySelector('table .small-user-agent, #tl_destroy_all, #tl_destroy'); },
+    atFAQ()         { return pageVal === 'faq'; },
     atUploader() {
-      // Treat as uploader iff NO 'page' (or page=index) AND the file input exists
+      // Uploader when NO page (or page=index) AND the file input exists
       if (hasPage && pageVal !== '' && pageVal !== 'index') return false;
       return !!document.querySelector('#obrazek, form[action="/"] input[type="file"]#obrazek, form[action="/"] input[type="file"][name="obrazek"]');
     },
-    atGallery() {
-      if (pageVal === 'userpanel') return true;
-      // Avoid header's `.userpanel`; look for real grid/thumb markers
-      return !!document.querySelector('.box-wrap, .inbox-wrap, img.inbox, a.inbox');
-    },
-    atSettings() {
-      if (pageVal === 'settings') return true;
-      return !!document.querySelector('.ussetmain, form[action*="settings"]');
-    },
-    atRelace() {
-      if (pageVal === 'relace') return true;
-      return !!document.querySelector('table .small-user-agent, #tl_destroy_all, #tl_destroy');
-    },
-    atFAQ() {
-      // Be strict: only treat FAQ when explicitly requested by URL
-      return pageVal === 'faq';
-    },
     name() {
-      // Explicit pages first; uploader after
-      if (this.atGallery())  return 'gallery';
-      if (this.atSettings()) return 'settings';
-      if (this.atRelace())   return 'relace';
-      if (this.atFAQ())      return 'faq';
-      if (this.atUploader()) return 'uploader';
+      // Order matters: explicit pages first, then uploader
+      if (this.atLogin())     return 'login';
+      if (this.atRegister())  return 'register';
+      if (this.atGallery())   return 'gallery';
+      if (this.atSettings())  return 'settings';
+      if (this.atRelace())    return 'relace';
+      if (this.atFAQ())       return 'faq';
+      if (this.atUploader())  return 'uploader';
       return 'unknown';
     }
   };
