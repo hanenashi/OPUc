@@ -7,11 +7,15 @@
 
   // ----- DOM anchors -----
   const form = document.querySelector('form[action="/"]') || document.querySelector('form');
-  const fileInput = form && (form.querySelector('#obrazek') || form.querySelector('input[type="file"][name="obrazek"], input[type="file"][name="obrazek[]"]'));
+  const fileInput = form && (
+    form.querySelector('#obrazek') ||
+    form.querySelector('input[type="file"][name="obrazek"]') ||
+    form.querySelector('input[type="file"][name="obrazek[]"]')
+  );
   if (!form || !fileInput) { O.warn('uploader: form or file input not found'); return; }
   fileInput.multiple = true;
 
-  // Locate URL field (for hiding + deletion in FormData)
+  // Optional: URL field in the main form (we’ll hide its fieldset too if found)
   const urlInput = form.querySelector('#url') || form.querySelector('input[name="url"]');
 
   // ----- State -----
@@ -69,21 +73,30 @@
 
     <div class="opuc-grid" id="opuc-grid"></div>
 
-    <div class="opuc-note" id="opuc-compat" ${state.dt ? 'hidden' : ''}>
+    <div class="opuc-note" id="opuc-compat" hidden>
       DataTransfer není k dispozici — použiji přímé odeslání formuláře na pozadí. Funkce “Auto-sync” je vypnutá.
     </div>
   `;
   form.parentElement.insertBefore(host, form);
 
-  // Hide ONLY the two native fieldsets (keep everything else intact)
+  // Explicitly toggle the compatibility note (bare mode CSS used to override [hidden])
+  const compat = host.querySelector('#opuc-compat');
+  compat.hidden = !!state.dt;
+
+  // Hide ONLY the native fieldsets / forms we care about
   try {
+    // Hide the fieldset holding the file input inside the main form
     const fileFs = fileInput.closest('fieldset');
-    fileFs && fileFs.classList.add('opuc-hide-native');
-    if (urlInput) {
-      const urlFs = urlInput.closest('fieldset');
-      urlFs && urlFs.classList.add('opuc-hide-native');
-    }
-    // Also hide small helper preview/spans inside those blocks if they leak
+    if (fileFs) fileFs.classList.add('opuc-hide-native');
+
+    // Hide the separate “Re-upload … z internetůch” form entirely
+    const reuploadForm = document.getElementById('xhttp');
+    if (reuploadForm) reuploadForm.classList.add('opuc-hide-native');
+
+    // If the main form also has a URL fieldset, hide that too
+    if (urlInput) urlInput.closest('fieldset')?.classList.add('opuc-hide-native');
+
+    // Mop up any helper nodes if they’re outside those fieldsets
     document.querySelector('#xpc-ctrlv')?.classList.add('opuc-hide-native');
     document.querySelector('#dimensions-output')?.classList.add('opuc-hide-native');
   } catch {}

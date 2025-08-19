@@ -83,3 +83,7 @@ html.opuc-bare #progress {
   font: 12px/1 system-ui, sans-serif !important;
   color: #333 !important;
 }
+
+/* --- keep [hidden] truly hidden (even if bare-mode sets display) --- */
+[hidden] { display: none !important; }
+html.opuc-bare [hidden] { display: none !important; }

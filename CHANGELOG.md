@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ---
 
 
+## [0.3.4] - 2025-08-20
+### Fixed
+- `[hidden]` now stays hidden under bare mode (compat note no longer leaks).
+- “Re-upload oprásku odněkud z internetůch” form (`#xhttp`) is hidden reliably.
+
+### Changed
+- Explicit compatibility-note toggle in uploader based on `DataTransfer` availability.
+
+
+---
+
+
 ## [0.3.3] - 2025-08-19
 ### Fixed
 - Stopped hiding a generic ancestor around native fields (which sometimes hid the OPUc UI under site CSS).
