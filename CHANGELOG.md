@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.2.3] - 2025-08-19
+### Fixed
+- Route detection: `?page=userpanel` was mis-identified as "uploader". Now prioritizes explicit `page` param and DOM markers.
+- Swipebox neutralization made robust: capture-phase click interceptor, jQuery plugin no-op, delegated handler `off`, class/rel stripping, and overlay removal.
+
+### Notes
+- Bare mode still hides the legacy upload spinner; we'll wire a minimal progress later.
+
+
+---
+
 ## [0.2.2] - 2025-08-19
 ### Added
 - Version echo in console on boot.
