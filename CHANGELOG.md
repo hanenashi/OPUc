@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+
+## [0.2.4] - 2025-08-19
+### Fixed
+- Root (`/`) misidentified as gallery due to a header `<div class="userpanel">`. Gallery detection now uses only true grid markers (`.box-wrap`, `.inbox-wrap`, `.inbox`), not the header class.
+
+
+---
+
 ## [0.2.3] - 2025-08-19
 ### Fixed
 - Route detection: `?page=userpanel` was mis-identified as "uploader". Now prioritizes explicit `page` param and DOM markers.

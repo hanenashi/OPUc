@@ -9,7 +9,6 @@
 
   // ---------- Logging ----------
   const start = performance.now();
-  const pad = n => String(n).padStart(2, '0');
   function log(level, msg, ...rest) {
     const prefix = `%c[${NS} v${O.version}]%c ${level}%c ${msg}`;
     const a = [
@@ -39,14 +38,15 @@
 
   O.route = {
     atUploader() {
-      // Only treat as uploader when NO 'page' param, OR explicitly index-like,
-      // and prefer a DOM marker (#obrazek file input) to be safe.
+      // Treat as uploader iff NO page param (or page=index) AND the file input exists
       if (hasPage && pageVal !== '' && pageVal !== 'index') return false;
       return !!document.querySelector('#obrazek, form[action="/"] input[type="file"]#obrazek, form[action="/"] input[type="file"][name="obrazek"]');
     },
     atGallery() {
+      // Explicit param wins
       if (pageVal === 'userpanel') return true;
-      return !!document.querySelector('.inbox-wrap, .box-wrap, .userpanel, #gallery, .galerie');
+      // DOM markers for the gallery grid; avoid the header's <div class="userpanel">
+      return !!document.querySelector('.box-wrap, .inbox-wrap, img.inbox, a.inbox');
     },
     atSettings() {
       if (pageVal === 'settings') return true;
@@ -58,9 +58,10 @@
     },
     atFAQ() {
       if (pageVal === 'faq') return true;
-      return !!document.querySelector('h2,h3') && /F\.A\.Q|FAQ/i.test(document.body.textContent || '');
+      return /F\.A\.Q|FAQ/i.test(document.body.textContent || '');
     },
     name() {
+      // Order matters: check explicit pages first, then uploader
       if (this.atGallery())  return 'gallery';
       if (this.atSettings()) return 'settings';
       if (this.atRelace())   return 'relace';
