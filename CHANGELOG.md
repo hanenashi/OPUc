@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.2.5] - 2025-08-19
+### Fixed
+- Uploader (`/`) was misidentified as FAQ due to a loose text-based detector. FAQ is now matched **only** when `?page=faq` is present.
+
+
+---
+
 
 ## [0.2.4] - 2025-08-19
 ### Fixed

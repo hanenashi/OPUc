@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         OPUc
 // @namespace    https://opu.peklo.biz/
-// @version      0.2.4
+// @version      0.2.5
 // @description  Unified modular overhaul for OPU with logging + bare-mode CSS
 // @match        https://opu.peklo.biz/*
 // @run-at       document-end
@@ -14,7 +14,7 @@
 (function () {
   'use strict';
 
-  const OPUC_VERSION = '0.2.4'; // keep in sync with @version
+  const OPUC_VERSION = '0.2.5'; // keep in sync with @version
   window.OPUc = window.OPUc || {};
   window.OPUc.version = OPUC_VERSION;
 
