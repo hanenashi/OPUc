@@ -5,6 +5,9 @@
   if (O.__utils_loaded) return;
   O.__utils_loaded = true;
 
+  // Ensure version is present (set by userscript header)
+  O.version = O.version || '0.0.0-dev';
+
   // ---------- Logging backbone ----------
   const start = performance.now();
   const pad = n => String(n).padStart(2, '0');
@@ -13,7 +16,7 @@
     return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}.${String(d.getMilliseconds()).padStart(3,'0')}`;
   };
   function log(level, msg, ...rest) {
-    const prefix = `%c[${NS}]%c ${level}%c ${msg}`;
+    const prefix = `%c[${NS} v${O.version}]%c ${level}%c ${msg}`;
     const a = [
       'color:#fff;background:#111;padding:1px 4px;border-radius:3px',
       level === 'ERR' ? 'color:#fff;background:#b00020;padding:1px 4px;border-radius:3px'
@@ -58,7 +61,7 @@
   };
 
   // ---------- Bare-mode CSS toggle ----------
-  // Persisted in settings; default = true while we iterate.
+  // Default to true while iterating
   const cfg = O.getSettings();
   if (typeof cfg.bareMode === 'undefined') O.set({ bareMode: true });
 

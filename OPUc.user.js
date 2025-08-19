@@ -1,30 +1,37 @@
 // ==UserScript==
 // @name         OPUc
 // @namespace    https://opu.peklo.biz/
-// @version      0.2.0
+// @version      0.2.2
 // @description  Unified modular overhaul for OPU with logging + bare-mode CSS
 // @match        https://opu.peklo.biz/*
 // @run-at       document-end
 // @noframes
 // @grant        none
+// @updateURL    https://raw.githubusercontent.com/hanenashi/OPUc/main/OPUc.user.js
+// @downloadURL  https://raw.githubusercontent.com/hanenashi/OPUc/main/OPUc.user.js
 // ==/UserScript==
 
 (function () {
   'use strict';
+
+  const OPUC_VERSION = '0.2.2'; // keep in sync with @version
+
+  // Expose version early so modules can read it
+  window.OPUc = window.OPUc || {};
+  window.OPUc.version = OPUC_VERSION;
 
   // --- Configure where modules/CSS are fetched from (your repo)
   const DEV_BASE = 'https://raw.githubusercontent.com/hanenashi/OPUc/main/';
 
   // --- Loader helpers
   async function loadText(path) {
-    const url = DEV_BASE + path + `?v=${Date.now()}`; // bust cache while iterating
+    const url = DEV_BASE + path + `?v=${Date.now()}`;
     const res = await fetch(url, { cache: 'no-store' });
     if (!res.ok) throw new Error(`Fetch failed: ${url} [${res.status}]`);
     return await res.text();
   }
   async function loadScript(path) {
     const txt = await loadText(path);
-    // eval in page context
     (0, eval)(txt);
   }
   async function loadCSS(path) {
@@ -38,14 +45,13 @@
 
   // --- Boot
   (async function boot() {
-    // Base CSS first so early flicker is minimized (bare mode toggled in utils)
-    await loadCSS('css/base.css');
+    console.log(`%c[OPUc]%c booting v${OPUc.version}`,
+      'color:#fff;background:#111;padding:1px 4px;border-radius:3px',
+      'color:inherit;background:transparent');
 
-    // Core utils (logger, route detect, settings, CSS toggles)
-    await loadScript('modules/utils.js');
-
-    // Router: decides page, logs everything, and loads page modules
-    await loadScript('modules/router.js');
+    await loadCSS('css/base.css');      // bare-mode + base resets
+    await loadScript('modules/utils.js');   // logger, route, settings, bare toggle
+    await loadScript('modules/router.js');  // per-route loader
   })().catch(err => {
     console.error('[OPUc] boot error:', err);
   });
