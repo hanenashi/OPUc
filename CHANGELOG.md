@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+
+## [0.3.3] - 2025-08-19
+### Fixed
+- Stopped hiding a generic ancestor around native fields (which sometimes hid the OPUc UI under site CSS).
+- Compatibility banner no longer tells you to use the old form; it now reflects the new fallback.
+- Native “Re-upload…” block now hides reliably.
+
+### Added
+- Fallback submission path when `DataTransfer` is unavailable: builds `FormData` from the existing form, appends queue files, `POST`s to the same endpoint, and renders the server response.
+
+### Changed
+- Native file/URL fieldsets are hidden unconditionally (the original form stays in DOM for submission).
+
+
+---
+
 ## [0.3.2] - 2025-08-19
 ### Added
 - Paste button that uses `navigator.clipboard.readText()` (mobile-friendly) to import image URLs.
