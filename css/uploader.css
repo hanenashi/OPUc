@@ -1,5 +1,10 @@
 /* css/uploader.css */
 
+/* Hide native uploader form without removing from DOM */
+.opuc-native-form-hidden { position: absolute !important; left: -9999px !important; width: 1px !important; height: 1px !important; overflow: hidden !important; }
+.opuc-hide-native { display: none !important; }
+
+/* Toolbar & controls */
 .opuc-up { 
   border: 1px solid var(--opuc-border, #ddd);
   border-radius: 12px;
@@ -80,6 +85,9 @@
   appearance: none; border: 0; background: transparent; cursor: pointer; padding: 8px; 
   font-size: 12px; border-right: 0;
 }
+
+/* Info note (compat mode) */
+.opuc-note { margin-top: 8px; font-size: 12px; opacity: .85; }
 
 /* Theme tokens */
 html.opuc-theme-dark {

@@ -5,6 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
 
+---
+
+## [0.3.2] - 2025-08-19
+### Added
+- Paste button that uses `navigator.clipboard.readText()` (mobile-friendly) to import image URLs.
+- Clipboard text parsing: detects image URLs and fetches them into the queue.
+- Auto-submit: **Poslat a odeslat** now populates the hidden native input and submits the form.
+
+### Changed
+- Native uploader inputs are hidden when `DataTransfer` is supported (form remains in DOM for submission).
+- If `DataTransfer` isn’t available, the native form stays visible with a compatibility note.
+
+
 
 ---
 

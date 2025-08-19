@@ -3,7 +3,7 @@
   const O = window.OPUc;
   if (!O) return;
 
-  O.log('uploader: init OPUh phase-2');
+  O.log('uploader: init OPUh phase-3 (hide native, URL paste, push→submit)');
 
   // ----- DOM anchors -----
   const form = document.querySelector('form[action="/"]') || document.querySelector('form');
@@ -13,6 +13,9 @@
     return;
   }
   fileInput.multiple = true;
+
+  // Try to locate any "URL re-upload" input so we can ignore/hide it
+  const urlInput = form.querySelector('input[type="text"][name*="url"], input[type="url"], input[name="tl_reupload"]');
 
   // ----- State -----
   const state = {
@@ -26,13 +29,8 @@
   };
 
   // Safe DataTransfer construction
-  try {
-    state.dt = new DataTransfer();
-    O.log('uploader: DataTransfer available');
-  } catch (e) {
-    state.dt = null;
-    O.warn('uploader: DataTransfer not constructible; auto-sync/push disabled');
-  }
+  try { state.dt = new DataTransfer(); O.log('uploader: DataTransfer available'); }
+  catch { state.dt = null; O.warn('uploader: DataTransfer not constructible; auto-sync/push disabled'); }
 
   // ----- UI scaffold -----
   const host = document.createElement('section');
@@ -40,6 +38,7 @@
   host.innerHTML = `
     <div class="opuc-up-bar">
       <button type="button" class="opuc-btn" id="opuc-add">Přidat soubory</button>
+      <button type="button" class="opuc-btn" id="opuc-paste">Vložit z&nbsp;clipboardu</button>
       <span class="opuc-sep"></span>
 
       <label class="opuc-toggle">
@@ -53,7 +52,7 @@
       <input type="range" id="opuc-jq" min="0.6" max="0.98" step="0.01" value="0.90" />
 
       <span class="opuc-sep"></span>
-      <button type="button" class="opuc-btn" id="opuc-push">Poslat do formuláře</button>
+      <button type="button" class="opuc-btn" id="opuc-push">Poslat a odeslat</button>
       <label class="opuc-toggle">
         <input type="checkbox" id="opuc-autosync" checked>
         <span>Auto-sync</span>
@@ -65,7 +64,7 @@
     </div>
 
     <div class="opuc-drop" id="opuc-drop">
-      <b>Přetáhněte obrázky sem</b> nebo vložte z&nbsp;clipboardu (Ctrl/Cmd+V)
+      <b>Přetáhněte obrázky sem</b> nebo vložte z&nbsp;clipboardu (Ctrl/Cmd+V) — umíme i URL adresy obrázků
     </div>
 
     <div class="opuc-progress" id="opuc-progress" hidden>
@@ -74,8 +73,19 @@
     </div>
 
     <div class="opuc-grid" id="opuc-grid"></div>
+
+    <div class="opuc-note" id="opuc-compat" hidden>
+      Váš prohlížeč nepodporuje DataTransfer. Ponechávám původní formulář viditelný — použijte prosím jeho výběr souborů.
+    </div>
   `;
   form.parentElement.insertBefore(host, form);
+
+  // Hide native form (but keep for submit) only if DataTransfer works
+  if (state.dt) {
+    form.classList.add('opuc-native-form-hidden');
+  } else {
+    host.querySelector('#opuc-compat').hidden = false;
+  }
 
   // Hidden picker
   const hiddenPicker = document.createElement('input');
@@ -91,6 +101,7 @@
   const autosync = host.querySelector('#opuc-autosync');
   const count = host.querySelector('#opuc-count');
   const btnPush = host.querySelector('#opuc-push');
+  const btnPaste = host.querySelector('#opuc-paste');
   const progWrap = host.querySelector('#opuc-progress');
   const progBar = host.querySelector('#opuc-bar');
   const progLabel = host.querySelector('#opuc-plabel');
@@ -104,8 +115,14 @@
     autosync.checked = false;
     autosync.disabled = true;
     btnPush.disabled = true;
-    btnPush.title = 'Váš prohlížeč nepodporuje DataTransfer – použijte původní výběr souborů';
+    btnPush.title = 'DataTransfer není k dispozici – použijte původní formulář';
   }
+
+  // Hide obvious native controls if present
+  try {
+    fileInput.closest('div, .uspas, .uspasfile')?.classList?.add('opuc-hide-native');
+    urlInput?.closest('div, .uspas, .uspasurl')?.classList?.add('opuc-hide-native');
+  } catch {}
 
   // ----- Helpers -----
   function updateCount() {
@@ -116,9 +133,7 @@
     if (!state.dt) return;
     try { state.dt = new DataTransfer(); } catch { state.dt = null; }
     if (!state.dt) return;
-    state.items.forEach(it => {
-      try { state.dt.items.add(it.file); } catch {}
-    });
+    state.items.forEach(it => { try { state.dt.items.add(it.file); } catch {} });
     if (autosync.checked && fileInput) {
       try { fileInput.files = state.dt.files; } catch (e) { O.warn('uploader: cannot assign input.files', e); }
     }
@@ -154,9 +169,7 @@
 
       // Load dimensions
       const img = new Image();
-      img.onload = () => {
-        card.querySelector('.dims').textContent = `${img.naturalWidth}×${img.naturalHeight}px`;
-      };
+      img.onload = () => { card.querySelector('.dims').textContent = `${img.naturalWidth}×${img.naturalHeight}px`; };
       img.src = url;
 
       state.items.push({ id, file, url, processed: false });
@@ -180,15 +193,12 @@
     const a = state.items.findIndex(x => x.id === aId);
     const b = state.items.findIndex(x => x.id === bId);
     if (a < 0 || b < 0) return;
-    const tmp = state.items[a];
-    state.items[a] = state.items[b];
-    state.items[b] = tmp;
+    const tmp = state.items[a]; state.items[a] = state.items[b]; state.items[b] = tmp;
 
     const aNode = grid.querySelector(`.opuc-card[data-id="${aId}"]`);
     const bNode = grid.querySelector(`.opuc-card[data-id="${bId}"]`);
     if (aNode && bNode) {
-      const aNext = aNode.nextSibling;
-      const bNext = bNode.nextSibling;
+      const aNext = aNode.nextSibling, bNext = bNode.nextSibling;
       grid.insertBefore(aNode, bNext);
       grid.insertBefore(bNode, aNext);
     }
@@ -202,10 +212,46 @@
     rebuildDataTransfer();
   }
 
-  // Resize utility (returns a new File or the original if no resize needed)
-  async function maybeResize(file) {
-    if (!state.resizeEnabled) return file;
+  // --- URL → File helpers ---
+  const urlRegex = /(https?:\/\/[^\s"'<>]+?\.(?:png|jpe?g|gif|webp|bmp|avif))(?:[?#][^\s"'<>]*)?/ig;
 
+  function extractImageUrls(text) {
+    const found = new Set();
+    let m; while ((m = urlRegex.exec(text))) found.add(m[0]);
+    return Array.from(found);
+  }
+
+  async function urlToFile(u) {
+    try {
+      const res = await fetch(u, { mode: 'cors' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const blob = await res.blob();
+      const extFromCT = (blob.type.split('/')[1] || 'jpg').replace('jpeg','jpg');
+      const urlObj = new URL(u);
+      const base = urlObj.pathname.split('/').pop() || `image.${extFromCT}`;
+      const name = /\./.test(base) ? base : `${base}.${extFromCT}`;
+      return new File([blob], name, { type: blob.type || 'image/jpeg' });
+    } catch (e) {
+      O.warn('uploader: fetch URL blocked (CORS?) →', u, e);
+      return null;
+    }
+  }
+
+  async function addFromTextClipboard(text) {
+    const urls = extractImageUrls(text);
+    if (!urls.length) { O.warn('uploader: clipboard text has no image URLs'); return; }
+    O.log(`uploader: URLs detected → ${urls.length}`);
+
+    const files = [];
+    for (const u of urls) {
+      const f = await urlToFile(u);
+      if (f) files.push(f);
+    }
+    if (files.length) addFiles(files);
+  }
+
+  // Resize utility (returns new File or original)
+  async function maybeResize(file) {
     const maxpx = Math.max(256, Math.min(12000, Number(inpMaxpx.value) || state.resizeMaxPx));
     const jq = Math.max(0.5, Math.min(0.99, Number(inpJq.value) || state.jpegQuality));
 
@@ -217,8 +263,8 @@
     });
 
     const { naturalWidth: w, naturalHeight: h } = img;
-    const scale = Math.min(1, maxpx / Math.max(w, h));
-    if (scale >= 1) return file; // no need to resize
+    const scale = state.resizeEnabled ? Math.min(1, maxpx / Math.max(w, h)) : 1;
+    if (scale >= 1) return file;
 
     const cw = Math.round(w * scale);
     const ch = Math.round(h * scale);
@@ -227,13 +273,12 @@
     const ctx = canvas.getContext('2d');
     ctx.drawImage(img, 0, 0, cw, ch);
 
-    // Prefer original mime when not jpeg; otherwise re-encode to jpeg with quality
     const wantJPEG = /jpe?g$/i.test(file.name) || /jpeg/i.test(file.type);
     const mime = wantJPEG ? 'image/jpeg' : (file.type || 'image/png');
     const quality = wantJPEG ? jq : undefined;
 
     const blob = await new Promise(res => canvas.toBlob(res, mime, quality));
-    const newName = file.name.replace(/\.(png|jpg|jpeg|webp)$/i, wantJPEG ? '.jpg' : '.$1');
+    const newName = file.name.replace(/\.(png|jpg|jpeg|webp|bmp|avif)$/i, wantJPEG ? '.jpg' : '.$1');
     return new File([blob], newName, { type: blob.type });
   }
 
@@ -241,56 +286,47 @@
     const total = state.items.length;
     if (!total) return;
 
-    // Show progress bar
     progWrap.hidden = false;
     let done = 0;
 
     for (const it of state.items) {
-      if (state.resizeEnabled) {
-        const before = it.file.size;
-        try {
-          const nf = await maybeResize(it.file);
-          if (nf !== it.file) {
-            it.file = nf;
-            // refresh size + preview
-            const card = grid.querySelector(`.opuc-card[data-id="${it.id}"]`);
-            card.querySelector('.size').textContent = `${(nf.size/1024).toFixed(1)} kB`;
-            // dims updated roughly: derive by maxpx (exact would require re-reading, skipped for speed)
-            card.querySelector('.dims').textContent = '↻';
-          }
-        } catch (e) {
-          O.warn('uploader: resize failed for one file', e);
+      try {
+        const nf = await maybeResize(it.file);
+        if (nf !== it.file) {
+          it.file = nf;
+          const card = grid.querySelector(`.opuc-card[data-id="${it.id}"]`);
+          card.querySelector('.size').textContent = `${(nf.size/1024).toFixed(1)} kB`;
+          card.querySelector('.dims').textContent = '↻';
         }
+      } catch (e) {
+        O.warn('uploader: resize failed for one file', e);
       }
       done++;
       const pct = Math.round((done / total) * 100);
       progBar.style.width = pct + '%';
       progLabel.textContent = pct + '%';
-      await new Promise(r => setTimeout(r, 0)); // yield
+      await new Promise(r => setTimeout(r, 0));
     }
-
-    // Hide progress
     setTimeout(() => { progWrap.hidden = true; }, 200);
   }
 
-  async function pushToForm() {
-    if (!state.items.length) { O.warn('uploader: pushToForm with empty queue'); return; }
+  async function pushAndSubmit() {
+    if (!state.items.length) { O.warn('uploader: empty queue'); return; }
     if (!state.dt) { O.warn('uploader: DataTransfer unsupported; cannot push'); return; }
 
-    // Process (resize) if needed
     await processAllIfNeeded();
 
-    // Rebuild DataTransfer with possibly processed files
     try {
       state.dt = new DataTransfer();
       state.items.forEach(it => { try { state.dt.items.add(it.file); } catch {} });
       fileInput.multiple = true;
       fileInput.files = state.dt.files;
-      O.log(`uploader: pushed ${state.items.length} file(s) to native input`);
+      O.log(`uploader: pushed ${state.items.length} file(s) → submitting form`);
       const submit = form.querySelector('input[type="submit"], button[type="submit"], input[name^="tl_"]');
-      submit?.focus();
+      if (submit) submit.click();
+      else form.submit();
     } catch (e) {
-      O.err('uploader: failed to push to form', e);
+      O.err('uploader: failed to push/submit', e);
     }
   }
 
@@ -304,7 +340,13 @@
   ;['dragleave','drop'].forEach(ev =>
     drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('hover'); })
   );
-  drop.addEventListener('drop', e => addFiles(e.dataTransfer.files));
+  drop.addEventListener('drop', e => {
+    const dt = e.dataTransfer;
+    if (dt && dt.files && dt.files.length) addFiles(dt.files);
+    else if (dt && dt.getData) {
+      const text = dt.getData('text/plain'); if (text) addFromTextClipboard(text);
+    }
+  });
 
   document.addEventListener('paste', e => {
     const items = e.clipboardData && e.clipboardData.items || [];
@@ -313,6 +355,20 @@
     if (imgs.length) {
       O.log(`uploader: paste → ${imgs.length} image(s)`);
       addFiles(imgs);
+    } else {
+      const text = e.clipboardData?.getData('text/plain');
+      if (text) addFromTextClipboard(text);
+    }
+  });
+
+  // Paste button (mobile-friendly): requires user gesture to read clipboard
+  btnPaste.addEventListener('click', async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text) await addFromTextClipboard(text);
+      else O.warn('uploader: clipboard is empty');
+    } catch (e) {
+      O.warn('uploader: clipboard readText failed (permission?)', e);
     }
   });
 
@@ -345,7 +401,7 @@
 
   // Toolbar
   host.querySelector('#opuc-clear').addEventListener('click', clearAll);
-  host.querySelector('#opuc-push').addEventListener('click', pushToForm);
+  host.querySelector('#opuc-push').addEventListener('click', pushAndSubmit);
   autosync.addEventListener('change', () => {
     state.autoSync = autosync.checked;
     if (state.autoSync) rebuildDataTransfer();
@@ -355,7 +411,7 @@
   inpMaxpx.addEventListener('change', () => state.resizeMaxPx = Math.max(256, Math.min(12000, Number(inpMaxpx.value)||2048)));
   inpJq.addEventListener('input',  () => state.jpegQuality = Math.max(0.5, Math.min(0.99, Number(inpJq.value)||0.9)));
 
-  // Import anything picked via the native input
+  // If the user uses the original input, import its files into our queue (if visible)
   fileInput.addEventListener('change', () => {
     if (fileInput.files && fileInput.files.length) {
       O.log(`uploader: importing ${fileInput.files.length} file(s) from native input`);
