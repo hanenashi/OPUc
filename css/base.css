@@ -1,13 +1,25 @@
 /* css/base.css */
 
-/* Base readable typography */
-html.opuc-bare, html.opuc-bare body {
-  background: #fff !important;
+/* ---------- Global theme tokens (apply site-wide when bare mode is OFF) ---------- */
+html.opuc-theme-dark:not(.opuc-bare) body {
+  background: #0c0f12 !important;
+  color: #e8eaed !important;
+}
+html.opuc-theme-light:not(.opuc-bare) body {
+  background: #ffffff !important;
   color: #111 !important;
+}
+html.opuc-theme-dark:not(.opuc-bare) a { color: #8ab4f8 !important; }
+html.opuc-theme-light:not(.opuc-bare) a { color: #0645ad !important; }
+
+/* When bare mode is ON, keep it skeletal but nudge toward theme for readability */
+html.opuc-bare.opuc-theme-dark body { background: #111 !important; color: #e8eaed !important; }
+html.opuc-bare.opuc-theme-light body { background: #fff !important;  color: #111 !important; }
+
+/* ---------- Bare mode skeleton ---------- */
+html.opuc-bare, html.opuc-bare body {
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif !important;
 }
-
-/* Reset common text/layout noise */
 html.opuc-bare * {
   background: transparent !important;
   box-shadow: none !important;
@@ -15,8 +27,6 @@ html.opuc-bare * {
   border-radius: 0 !important;
   outline: none !important;
 }
-
-/* Strip margins/paddings that come from site CSS */
 html.opuc-bare body, html.opuc-bare div, html.opuc-bare section, html.opuc-bare article,
 html.opuc-bare header, html.opuc-bare footer, html.opuc-bare main, html.opuc-bare nav,
 html.opuc-bare p, html.opuc-bare ul, html.opuc-bare ol, html.opuc-bare li,
@@ -29,35 +39,23 @@ html.opuc-bare table, html.opuc-bare tr, html.opuc-bare td, html.opuc-bare th {
   color: inherit !important;
   font: inherit !important;
 }
-
-/* Links visible and standard */
-html.opuc-bare a { color: #0645ad !important; text-decoration: underline !important; }
-
-/* Media displayed at natural size */
+html.opuc-bare a { text-decoration: underline !important; }
 html.opuc-bare img, html.opuc-bare video, html.opuc-bare canvas, html.opuc-bare svg {
   max-width: none !important;
   height: auto !important;
   filter: none !important;
   opacity: 1 !important;
 }
-
-/* Keep blocks blocky so content doesn’t collapse */
 html.opuc-bare div, html.opuc-bare section, html.opuc-bare article, html.opuc-bare main, html.opuc-bare header, html.opuc-bare footer, html.opuc-bare nav {
   display: block !important;
 }
-
-/* Inputs usable */
 html.opuc-bare input, html.opuc-bare select, html.opuc-bare textarea, html.opuc-bare button {
   border: 1px solid #ddd !important;
   padding: 6px 8px !important;
   background: #fff !important;
 }
-
-/* Tables readable */
 html.opuc-bare table { border-collapse: collapse !important; }
 html.opuc-bare th, html.opuc-bare td { border: 1px solid #e5e5e5 !important; padding: 6px 8px !important; }
-
-/* Give the main container some breathing room */
 html.opuc-bare body { padding: 12px !important; }
 
 /* Route badge */
@@ -79,7 +77,7 @@ html.opuc-bare [style*="templates/design/progress2.gif"] {
 html.opuc-bare .progress,
 html.opuc-bare .uploading,
 html.opuc-bare #progress {
-  background: #fff !important;
+  background: var(--opuc-pb-bg, #fff) !important;
   border: 1px solid #ddd !important;
   padding: 6px 8px !important;
   font: 12px/1 system-ui, sans-serif !important;

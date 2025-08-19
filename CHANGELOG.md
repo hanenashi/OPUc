@@ -5,6 +5,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
 
+
+
+---
+
+
+## [0.2.7] - 2025-08-19
+### Added
+- Two-column settings layout: left = native OPU, right = OPUc panel.
+- Theme selector in OPUc panel: **Simple Dark** / **Simple White**.
+- Global theme classes (`opuc-theme-dark` / `opuc-theme-light`) applied on `<html>` and honored across pages.
+- Responsive behavior: settings stack to one column under 960px.
+
+### Changed
+- `utils`: apply theme on boot; store `theme` in `OPUc_SETTINGS`.
+
+### Notes
+- Bare mode remains skeletal; theme softly influences colors even when bare mode is ON.
+
+
 ---
 
 
