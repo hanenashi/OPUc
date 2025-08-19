@@ -6,6 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 
 
+---
+
+
+
+## [0.3.0] - 2025-08-19
+### Added
+- **Uploader OPUh Phase-1**:
+  - Drag-and-drop and clipboard paste of images.
+  - Thumbnail queue with size + dimensions.
+  - Reorder (up/down), remove, clear queue.
+  - **Push to form**: uses `DataTransfer` to sync the queue into the native OPU file input, preserving server behavior.
+  - Auto-sync toggle (on by default) keeps the native input updated as the queue changes.
+
+### Notes
+- Works for both single and multi-upload modes; server decides what it accepts. 
+- Next phases: crop/resize pipeline, progress, sequential background posts.
+
+
 
 ---
 
