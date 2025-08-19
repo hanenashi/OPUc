@@ -1,7 +1,11 @@
 /* css/base.css */
 
-/* Flag on <html> so we can scope the nuclear option */
-html.opuc-bare, html.opuc-bare body { background: #fff !important; color: #111 !important; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif !important; }
+/* Base readable typography */
+html.opuc-bare, html.opuc-bare body {
+  background: #fff !important;
+  color: #111 !important;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif !important;
+}
 
 /* Reset common text/layout noise */
 html.opuc-bare * {
@@ -12,7 +16,7 @@ html.opuc-bare * {
   outline: none !important;
 }
 
-/* Strip margins/paddings that come from OPU CSS */
+/* Strip margins/paddings that come from site CSS */
 html.opuc-bare body, html.opuc-bare div, html.opuc-bare section, html.opuc-bare article,
 html.opuc-bare header, html.opuc-bare footer, html.opuc-bare main, html.opuc-bare nav,
 html.opuc-bare p, html.opuc-bare ul, html.opuc-bare ol, html.opuc-bare li,
@@ -29,7 +33,7 @@ html.opuc-bare table, html.opuc-bare tr, html.opuc-bare td, html.opuc-bare th {
 /* Links visible and standard */
 html.opuc-bare a { color: #0645ad !important; text-decoration: underline !important; }
 
-/* Images: show at natural size */
+/* Media displayed at natural size */
 html.opuc-bare img, html.opuc-bare video, html.opuc-bare canvas, html.opuc-bare svg {
   max-width: none !important;
   height: auto !important;
@@ -37,12 +41,12 @@ html.opuc-bare img, html.opuc-bare video, html.opuc-bare canvas, html.opuc-bare 
   opacity: 1 !important;
 }
 
-/* Layout guard rails: keep blocks blocky so content doesn’t collapse */
+/* Keep blocks blocky so content doesn’t collapse */
 html.opuc-bare div, html.opuc-bare section, html.opuc-bare article, html.opuc-bare main, html.opuc-bare header, html.opuc-bare footer, html.opuc-bare nav {
   display: block !important;
 }
 
-/* Inputs still usable */
+/* Inputs usable */
 html.opuc-bare input, html.opuc-bare select, html.opuc-bare textarea, html.opuc-bare button {
   border: 1px solid #ddd !important;
   padding: 6px 8px !important;
@@ -53,14 +57,31 @@ html.opuc-bare input, html.opuc-bare select, html.opuc-bare textarea, html.opuc-
 html.opuc-bare table { border-collapse: collapse !important; }
 html.opuc-bare th, html.opuc-bare td { border: 1px solid #e5e5e5 !important; padding: 6px 8px !important; }
 
-/* Give the main container some breathing room so it isn't stuck to edges */
+/* Give the main container some breathing room */
 html.opuc-bare body { padding: 12px !important; }
 
-/* Route badge so we can visually confirm page type if needed */
+/* Route badge */
 html[data-opuc-route]:after {
   content: attr(data-opuc-route) ' mode';
   position: fixed; right: 8px; bottom: 8px;
   font: 12px/1 system-ui, sans-serif;
   color: #333; background: #eee; padding: 2px 6px; border: 1px solid #ddd;
   opacity: .8; z-index: 2147483000;
+}
+
+/* Bare-mode: hide legacy progress spinner gif */
+html.opuc-bare img[src*="templates/design/progress2.gif"],
+html.opuc-bare [style*="templates/design/progress2.gif"] {
+  display: none !important;
+}
+
+/* Optional: minimal textual progress stub */
+html.opuc-bare .progress,
+html.opuc-bare .uploading,
+html.opuc-bare #progress {
+  background: #fff !important;
+  border: 1px solid #ddd !important;
+  padding: 6px 8px !important;
+  font: 12px/1 system-ui, sans-serif !important;
+  color: #333 !important;
 }

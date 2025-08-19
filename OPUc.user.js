@@ -38,13 +38,13 @@
 
   // --- Boot
   (async function boot() {
-    // Base CSS first so early flicker is minimized (bare mode is toggled inside utils)
+    // Base CSS first so early flicker is minimized (bare mode toggled in utils)
     await loadCSS('css/base.css');
 
     // Core utils (logger, route detect, settings, CSS toggles)
     await loadScript('modules/utils.js');
 
-    // Router: decides page, logs everything, and (later) loads page modules
+    // Router: decides page, logs everything, and loads page modules
     await loadScript('modules/router.js');
   })().catch(err => {
     console.error('[OPUc] boot error:', err);

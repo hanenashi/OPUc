@@ -58,18 +58,16 @@
   };
 
   // ---------- Bare-mode CSS toggle ----------
-  // Flip this on to nuke site styling and see raw layout.
   // Persisted in settings; default = true while we iterate.
   const cfg = O.getSettings();
   if (typeof cfg.bareMode === 'undefined') O.set({ bareMode: true });
 
-  // Add a keyboard toggle (Ctrl+Alt+B) to switch bare mode live.
+  // Keyboard toggle (Ctrl+Alt+B)
   document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'b') {
       const cur = O.getSettings().bareMode;
       O.set({ bareMode: !cur });
       O.log(`Bare mode: ${!cur ? 'ON' : 'OFF'} (reload to fully apply)`);
-      // Live toggle class for any CSS that looks at it
       document.documentElement.classList.toggle('opuc-bare', !cur);
     }
   });
