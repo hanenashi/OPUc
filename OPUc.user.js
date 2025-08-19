@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         OPUc
 // @namespace    https://opu.peklo.biz/
-// @version      0.3.0
+// @version      0.3.1
 // @description  Unified modular overhaul for OPU with logging + bare-mode + uploader queue
 // @match        https://opu.peklo.biz/*
 // @run-at       document-end
@@ -14,7 +14,7 @@
 (function () {
   'use strict';
 
-  const OPUC_VERSION = '0.3.0'; // keep in sync with @version
+  const OPUC_VERSION = '0.3.1'; // keep in sync with @version
   window.OPUc = window.OPUc || {};
   window.OPUc.version = OPUC_VERSION;
 
@@ -42,7 +42,7 @@
       'color:inherit;background:transparent');
 
     await loadCSS('css/base.css');        // bare-mode + theme tokens
-    await loadScript('modules/utils.js'); // logger, route, settings, theme
+    await loadScript('modules/utils.js'); // logger, route, settings
     await loadScript('modules/router.js');// per-route loader
   })().catch(err => console.error('[OPUc] boot error:', err));
 })();

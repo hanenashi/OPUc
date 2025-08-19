@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ---
 
 
+## [0.3.1] - 2025-08-19
+### Fixed
+- Safe `DataTransfer` construction (no crash on browsers where it’s not constructible).
+
+### Added
+- Drag-to-reorder thumbnails (HTML5 DnD).
+- Global resize-on-push: max dimension + JPEG quality; processed via canvas when pushing to form.
+- Progress bar during processing.
+- Fallback behavior when `DataTransfer` is unavailable (queue works; push/auto-sync disabled with tip).
+
+
+
+---
+
+
 
 ## [0.3.0] - 2025-08-19
 ### Added
