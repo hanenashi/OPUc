@@ -1,1 +1,66 @@
-/* base.css - placeholder for OPUc CSS */
+/* css/base.css */
+
+/* Flag on <html> so we can scope the nuclear option */
+html.opuc-bare, html.opuc-bare body { background: #fff !important; color: #111 !important; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif !important; }
+
+/* Reset common text/layout noise */
+html.opuc-bare * {
+  background: transparent !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  border-radius: 0 !important;
+  outline: none !important;
+}
+
+/* Strip margins/paddings that come from OPU CSS */
+html.opuc-bare body, html.opuc-bare div, html.opuc-bare section, html.opuc-bare article,
+html.opuc-bare header, html.opuc-bare footer, html.opuc-bare main, html.opuc-bare nav,
+html.opuc-bare p, html.opuc-bare ul, html.opuc-bare ol, html.opuc-bare li,
+html.opuc-bare h1, html.opuc-bare h2, html.opuc-bare h3, html.opuc-bare h4, html.opuc-bare h5, html.opuc-bare h6,
+html.opuc-bare form, html.opuc-bare label, html.opuc-bare input, html.opuc-bare select, html.opuc-bare textarea, html.opuc-bare button,
+html.opuc-bare table, html.opuc-bare tr, html.opuc-bare td, html.opuc-bare th {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  color: inherit !important;
+  font: inherit !important;
+}
+
+/* Links visible and standard */
+html.opuc-bare a { color: #0645ad !important; text-decoration: underline !important; }
+
+/* Images: show at natural size */
+html.opuc-bare img, html.opuc-bare video, html.opuc-bare canvas, html.opuc-bare svg {
+  max-width: none !important;
+  height: auto !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+/* Layout guard rails: keep blocks blocky so content doesn’t collapse */
+html.opuc-bare div, html.opuc-bare section, html.opuc-bare article, html.opuc-bare main, html.opuc-bare header, html.opuc-bare footer, html.opuc-bare nav {
+  display: block !important;
+}
+
+/* Inputs still usable */
+html.opuc-bare input, html.opuc-bare select, html.opuc-bare textarea, html.opuc-bare button {
+  border: 1px solid #ddd !important;
+  padding: 6px 8px !important;
+  background: #fff !important;
+}
+
+/* Tables readable */
+html.opuc-bare table { border-collapse: collapse !important; }
+html.opuc-bare th, html.opuc-bare td { border: 1px solid #e5e5e5 !important; padding: 6px 8px !important; }
+
+/* Give the main container some breathing room so it isn't stuck to edges */
+html.opuc-bare body { padding: 12px !important; }
+
+/* Route badge so we can visually confirm page type if needed */
+html[data-opuc-route]:after {
+  content: attr(data-opuc-route) ' mode';
+  position: fixed; right: 8px; bottom: 8px;
+  font: 12px/1 system-ui, sans-serif;
+  color: #333; background: #eee; padding: 2px 6px; border: 1px solid #ddd;
+  opacity: .8; z-index: 2147483000;
+}
