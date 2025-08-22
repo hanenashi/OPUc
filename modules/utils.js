@@ -31,12 +31,18 @@
   O.saveSettings = (obj) => localStorage.setItem(SKEY, JSON.stringify(obj || {}));
   O.set = (patch) => { const cur = O.getSettings(); O.saveSettings({ ...cur, ...patch }); return O.getSettings(); };
 
-  // ---------- Theme handling ----------
+  // ---------- Theme & Bare handling ----------
   O.applyTheme = (theme) => {
     const html = document.documentElement;
     html.classList.remove('opuc-theme-dark', 'opuc-theme-light');
     if (theme === 'light') html.classList.add('opuc-theme-light');
     else html.classList.add('opuc-theme-dark');
+  };
+  O.setBareMode = (on) => {
+    const html = document.documentElement;
+    html.classList.toggle('opuc-bare', !!on);
+    O.set({ bareMode: !!on });
+    O.log(`Bare mode: ${on ? 'ON' : 'OFF'}`);
   };
 
   // ---------- Route detection ----------
@@ -67,21 +73,18 @@
     }
   };
 
-  // ---------- Bare-mode toggle ----------
+  // ---------- Init flags ----------
   const cfg = O.getSettings();
   if (typeof cfg.bareMode === 'undefined') O.set({ bareMode: true });
-  if (typeof cfg.theme === 'undefined') O.set({ theme: 'dark' }); // default theme
+  if (typeof cfg.theme === 'undefined') O.set({ theme: 'dark' });
 
+  // Keyboard shortcut remains
   document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'b') {
-      const cur = O.getSettings().bareMode;
-      O.set({ bareMode: !cur });
-      O.log(`Bare mode: ${!cur ? 'ON' : 'OFF'} (reload to fully apply)`);
-      document.documentElement.classList.toggle('opuc-bare', !cur);
+      O.setBareMode(!O.getSettings().bareMode);
     }
   });
 
-  // Apply bare + theme flags on <html>
   document.documentElement.classList.toggle('opuc-bare', !!O.getSettings().bareMode);
   O.applyTheme(O.getSettings().theme);
   document.documentElement.setAttribute('data-opuc-route', O.route.name());

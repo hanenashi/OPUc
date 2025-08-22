@@ -7,15 +7,11 @@
 
   // ----- DOM anchors -----
   const form = document.querySelector('form[action="/"]') || document.querySelector('form');
-  const fileInput = form && (
-    form.querySelector('#obrazek') ||
-    form.querySelector('input[type="file"][name="obrazek"]') ||
-    form.querySelector('input[type="file"][name="obrazek[]"]')
-  );
+  const fileInput = form && (form.querySelector('#obrazek') || form.querySelector('input[type="file"][name="obrazek"], input[type="file"][name="obrazek[]"]'));
   if (!form || !fileInput) { O.warn('uploader: form or file input not found'); return; }
   fileInput.multiple = true;
 
-  // Optional: URL field in the main form (we’ll hide its fieldset too if found)
+  // Locate URL field (for optional cleanup in FormData)
   const urlInput = form.querySelector('#url') || form.querySelector('input[name="url"]');
 
   // ----- State -----
@@ -73,13 +69,13 @@
 
     <div class="opuc-grid" id="opuc-grid"></div>
 
-    <div class="opuc-note" id="opuc-compat" hidden>
+    <div class="opuc-note" id="opuc-compat" ${state.dt ? 'hidden' : ''}>
       DataTransfer není k dispozici — použiji přímé odeslání formuláře na pozadí. Funkce “Auto-sync” je vypnutá.
     </div>
   `;
   form.parentElement.insertBefore(host, form);
 
-  // Explicitly toggle the compatibility note (bare mode CSS used to override [hidden])
+  // Ensure the compat note visibility is correct even under bare mode
   const compat = host.querySelector('#opuc-compat');
   compat.hidden = !!state.dt;
 
@@ -93,10 +89,7 @@
     const reuploadForm = document.getElementById('xhttp');
     if (reuploadForm) reuploadForm.classList.add('opuc-hide-native');
 
-    // If the main form also has a URL fieldset, hide that too
-    if (urlInput) urlInput.closest('fieldset')?.classList.add('opuc-hide-native');
-
-    // Mop up any helper nodes if they’re outside those fieldsets
+    // Mop up any helper nodes if they’re outside those blocks
     document.querySelector('#xpc-ctrlv')?.classList.add('opuc-hide-native');
     document.querySelector('#dimensions-output')?.classList.add('opuc-hide-native');
   } catch {}
@@ -270,7 +263,9 @@
     // reflect dims + size
     const card = grid.querySelector(`.opuc-card[data-id="${state.items.find(it => it.file === file)?.id}"]`);
     if (card) {
+      // if we didn’t find the card by reference, leave old dims; it’s cosmetic
       card.querySelector('.size').textContent = `${(nf.size/1024).toFixed(1)} kB`;
+      // leave dims as-is or mark approximate
       card.querySelector('.dims').textContent = `${cw}×${ch}px`;
     }
     return nf;
