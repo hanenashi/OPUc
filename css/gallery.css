@@ -1,5 +1,9 @@
 /* css/gallery.css */
 
+/* hide native paginations & per-page UI */
+.opuc-hide-native-pager { display: none !important; }
+.opuc-hide-native-perpage { display: none !important; }
+
 /* Hide OPU original paginations (top & bottom) */
 .opuc-hide-native-pager { display: none !important; }
 
