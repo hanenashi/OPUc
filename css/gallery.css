@@ -1,5 +1,8 @@
 /* css/gallery.css */
 
+/* Hide OPU original paginations (top & bottom) */
+.opuc-hide-native-pager { display: none !important; }
+
 /* Selected tiles */
 .box.selected, .boxtop.selected {
   border: 1px solid #fff !important;
@@ -41,4 +44,40 @@
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   font-size: 22px;
   font-weight: 700;
+}
+
+/* OPUc floating pager */
+.opuc-pager {
+  position: fixed;
+  right: 12px;
+  bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  background: rgba(20,20,20,.9);
+  color: #eee;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 10px;
+  z-index: 2147483601;
+  backdrop-filter: blur(6px);
+}
+.opuc-pager .opuc-btn.sm {
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: #2c2c2c;
+  color: #eee;
+  border: 1px solid #444;
+  cursor: pointer;
+}
+.opuc-pager .opuc-btn.sm:hover { background: #3a3a3a; }
+.opuc-pager .opuc-pg { display: flex; align-items: center; gap: 6px; }
+.opuc-pager .opuc-pg-input {
+  width: 64px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background: #111;
+  color: #eee;
+  text-align: right;
 }

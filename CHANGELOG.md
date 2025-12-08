@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 
 
+## [0.3.10] - 2025-12-09
+### Added
+- OPUc floating pager (First/Prev/Page input/Next/Last) with keyboard navigation.
+### Changed
+- Original `.pagiup` / `.pagidown` pagers are hidden for a single source of truth.
+
+---
 
 ## [0.3.9] - 2025-12-09
 ### Fixed
