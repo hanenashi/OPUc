@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         OPUc
 // @namespace    https://opu.peklo.biz/
-// @version      0.3.6
-// @description  Unified modular overhaul for OPU with logging + bare-mode + uploader queue + per-image crop/resize
+// @version      0.3.7
+// @description  OPU overhaul with modular router, themes, bare mode, and tile editor
 // @match        https://opu.peklo.biz/*
 // @run-at       document-end
 // @noframes
@@ -14,14 +14,15 @@
 (function () {
   'use strict';
 
-  const OPUC_VERSION = '0.3.6';
+  const OPUC_VERSION = '0.3.7';
+  const BUILD_SALT = 'b307-' + Math.floor(Date.now()/60000); // changes every minute
   window.OPUc = window.OPUc || {};
   window.OPUc.version = OPUC_VERSION;
 
   const DEV_BASE = 'https://raw.githubusercontent.com/hanenashi/OPUc/main/';
 
   async function loadText(path) {
-    const url = DEV_BASE + path + `?v=${Date.now()}`;
+    const url = DEV_BASE + path + `?v=${BUILD_SALT}`;
     const res = await fetch(url, { cache: 'no-store' });
     if (!res.ok) throw new Error(`Fetch failed: ${url} [${res.status}]`);
     return await res.text();
@@ -42,7 +43,7 @@
       'color:inherit;background:transparent');
 
     await loadCSS('css/base.css');
-    await loadCSS('css/uploader.css');    // ensure latest styles for overlays/buttons
+    await loadCSS('css/uploader.css');
     await loadScript('modules/utils.js');
     await loadScript('modules/router.js');
   })().catch(err => console.error('[OPUc] boot error:', err));

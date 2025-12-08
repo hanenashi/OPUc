@@ -5,6 +5,40 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
 
+
+
+
+## [0.3.7] - 2025-12-09
+### Fixed
+- Uploader now force-refreshes module assets (minute-based salt) to avoid stale caches.
+- Self-heals tiles: ensures the Crop/Resize/Remove bar exists for every card.
+
+### Added
+- Hover/touch mini-FAB on each thumbnail for quick actions.
+
+
+## [0.3.7] - 2025-12-09
+### Fixed
+- Uploader now force-refreshes module assets (minute-based salt) to avoid stale caches.
+- Self-heals tiles: ensures the Crop/Resize/Remove bar exists for every card.
+
+### Added
+- Hover/touch mini-FAB on each thumbnail for quick actions.
+
+
+---
+
+
+## [0.3.6] - 2025-12-09
+### Added
+- Per-image tools on uploader tiles: **Crop** (Cropper.js modal), **Resize** (percent or WxH / W× / ×H), **Remove**.
+- Keeps tile style; edits update filename, size and dimensions; order preserved.
+
+### Notes
+- Cropper.js is loaded on-demand from cdnjs (1.5.13).
+
+
+
 ---
 
 

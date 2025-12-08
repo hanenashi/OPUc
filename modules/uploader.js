@@ -3,31 +3,47 @@
   const O = window.OPUc;
   if (!O) return;
 
-  O.log('uploader: init OPUh phase-3.1 (targeted hide + fetch fallback)');
+  O.log('uploader: OPUc tile tools v0.3.7 (crop/resize/remove)');
 
-  // ----- DOM anchors -----
+  // ----- external cropper loader -----
+  let cropperReady = false, cropperLoading = false;
+  function ensureCropper() {
+    return new Promise((resolve, reject) => {
+      if (cropperReady) return resolve(true);
+      if (cropperLoading) {
+        const iv = setInterval(() => { if (cropperReady) { clearInterval(iv); resolve(true); } }, 50);
+        return;
+      }
+      cropperLoading = true;
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css';
+      const js = document.createElement('script');
+      js.src = 'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js';
+      js.onload = () => { cropperReady = true; resolve(true); };
+      js.onerror = reject;
+      document.head.appendChild(link);
+      document.head.appendChild(js);
+    });
+  }
+
+  // ----- find native form + input -----
   const form = document.querySelector('form[action="/"]') || document.querySelector('form');
   const fileInput = form && (form.querySelector('#obrazek') || form.querySelector('input[type="file"][name="obrazek"], input[type="file"][name="obrazek[]"]'));
   if (!form || !fileInput) { O.warn('uploader: form or file input not found'); return; }
   fileInput.multiple = true;
 
-  // Locate URL field (for optional cleanup in FormData)
-  const urlInput = form.querySelector('#url') || form.querySelector('input[name="url"]');
-
   // ----- State -----
   const state = {
-    items: [],
-    dt: null,                // DataTransfer or null
+    items: [],   // [{id, file}]
+    dt: null,
     autoSync: true,
     resizeEnabled: true,
     resizeMaxPx: 2048,
     jpegQuality: 0.9,
     draggingId: null
   };
-
-  // Try DataTransfer (don’t crash if not constructible)
-  try { state.dt = new DataTransfer(); O.log('uploader: DataTransfer available'); }
-  catch { state.dt = null; O.warn('uploader: DataTransfer not constructible; using direct FormData submit'); }
+  try { state.dt = new DataTransfer(); O.log('uploader: DataTransfer available'); } catch { state.dt = null; O.warn('uploader: DataTransfer not constructible'); }
 
   // ----- UI scaffold -----
   const host = document.createElement('section');
@@ -75,34 +91,22 @@
   `;
   form.parentElement.insertBefore(host, form);
 
-  // Ensure the compat note visibility is correct even under bare mode
-  const compat = host.querySelector('#opuc-compat');
-  compat.hidden = !!state.dt;
+  host.querySelector('#opuc-compat').hidden = !!state.dt;
 
-  // Hide ONLY the native fieldsets / forms we care about
+  // hide native blocks
   try {
-    // Hide the fieldset holding the file input inside the main form
-    const fileFs = fileInput.closest('fieldset');
-    if (fileFs) fileFs.classList.add('opuc-hide-native');
-
-    // Hide the separate “Re-upload … z internetůch” form entirely
-    const reuploadForm = document.getElementById('xhttp');
-    if (reuploadForm) reuploadForm.classList.add('opuc-hide-native');
-
-    // Mop up any helper nodes if they’re outside those blocks
+    fileInput.closest('fieldset')?.classList.add('opuc-hide-native');
+    document.getElementById('xhttp')?.classList.add('opuc-hide-native');
     document.querySelector('#xpc-ctrlv')?.classList.add('opuc-hide-native');
     document.querySelector('#dimensions-output')?.classList.add('opuc-hide-native');
   } catch {}
 
   // Hidden picker
   const hiddenPicker = document.createElement('input');
-  hiddenPicker.type = 'file';
-  hiddenPicker.accept = 'image/*';
-  hiddenPicker.multiple = true;
-  hiddenPicker.style.display = 'none';
+  hiddenPicker.type = 'file'; hiddenPicker.accept = 'image/*'; hiddenPicker.multiple = true; hiddenPicker.style.display = 'none';
   document.body.appendChild(hiddenPicker);
 
-  // ----- Elements -----
+  // ----- elements -----
   const grid = host.querySelector('#opuc-grid');
   const drop = host.querySelector('#opuc-drop');
   const autosync = host.querySelector('#opuc-autosync');
@@ -112,34 +116,43 @@
   const progWrap = host.querySelector('#opuc-progress');
   const progBar = host.querySelector('#opuc-bar');
   const progLabel = host.querySelector('#opuc-plabel');
-
   const inpResize = host.querySelector('#opuc-resize');
   const inpMaxpx  = host.querySelector('#opuc-maxpx');
   const inpJq     = host.querySelector('#opuc-jq');
 
-  // Disable autosync if DataTransfer unsupported
-  if (!state.dt) {
-    autosync.checked = false;
-    autosync.disabled = true;
-  }
+  if (!state.dt) { autosync.checked = false; autosync.disabled = true; }
 
-  // ----- Helpers -----
+  // ----- utils -----
   function updateCount() {
     count.textContent = `${state.items.length} ${state.items.length === 1 ? 'soubor' : 'souborů'}`;
   }
-
   function rebuildDataTransfer() {
-    if (!state.dt) return;               // don’t try to re-create if unsupported
-    let dt = state.dt;
-    try { dt = new DataTransfer(); }     // re-init cleanly
-    catch { state.dt = null; return; }   // bail if this environment forbids construction
+    if (!state.dt) return;
+    let dt; try { dt = new DataTransfer(); } catch { state.dt = null; return; }
     state.items.forEach(it => { try { dt.items.add(it.file); } catch {} });
     state.dt = dt;
-    if (autosync.checked && fileInput) {
-      try { fileInput.files = state.dt.files; } catch (e) { O.warn('uploader: cannot assign input.files', e); }
-    }
+    if (autosync.checked && fileInput) { try { fileInput.files = state.dt.files; } catch {} }
     updateCount();
   }
+
+  function makeOpsBar() {
+    const bar = document.createElement('div');
+    bar.className = 'opuc-ops';
+    bar.innerHTML = `
+      <button class="opuc-icon opuc-crop"   title="Ořez (crop)">✂️</button>
+      <button class="opuc-icon opuc-resize" title="Změnit velikost">🪄</button>
+      <button class="opuc-icon opuc-remove" title="Odebrat">✕</button>
+      <div class="opuc-fab"><span>✂️</span><span>🪄</span><span>✕</span></div>
+    `;
+    return bar;
+  }
+  function ensureOpsBars() {
+    grid.querySelectorAll('.opuc-card').forEach(card => {
+      if (!card.querySelector('.opuc-ops')) card.appendChild(makeOpsBar());
+    });
+  }
+
+  function humanKB(b) { return (b/1024).toFixed(1) + ' kB'; }
 
   function cardHTML(id, url, name, sizeKB) {
     return `
@@ -147,9 +160,6 @@
       <div class="meta">
         <div class="name" title="${name}">${name}</div>
         <div class="sub"><span class="size">${sizeKB.toFixed(1)} kB</span> <span class="dims">…</span></div>
-      </div>
-      <div class="ops">
-        <button class="opuc-icon remove" title="Odebrat">✕</button>
       </div>
     `;
   }
@@ -167,165 +177,167 @@
       card.draggable = true;
       card.innerHTML = cardHTML(id, url, file.name, file.size/1024);
       grid.appendChild(card);
+      card.appendChild(makeOpsBar());
 
       const img = new Image();
-      img.onload = () => { card.querySelector('.dims').textContent = `${img.naturalWidth}×${img.naturalHeight}px`; };
+      img.onload = () => {
+        card.querySelector('.dims').textContent = `${img.naturalWidth}×${img.naturalHeight}px`;
+        URL.revokeObjectURL(url);
+      };
       img.src = url;
 
-      state.items.push({ id, file, url });
+      state.items.push({ id, file });
     });
 
     rebuildDataTransfer();
   }
 
-  function removeById(id) {
+  function findItem(id) { return state.items.find(x => x.id === id); }
+
+  function replaceFileOnCard(card, newFile) {
+    const id = card.dataset.id;
+    const item = findItem(id);
+    if (!item) return;
+
+    item.file = newFile;
+
+    // refresh visuals
+    const url = URL.createObjectURL(newFile);
+    const img = card.querySelector('.thumb img');
+    img.src = url;
+    card.querySelector('.name').textContent = newFile.name;
+    card.querySelector('.size').textContent = humanKB(newFile.size);
+    const di = card.querySelector('.dims');
+    const probe = new Image();
+    probe.onload = () => { di.textContent = `${probe.naturalWidth}×${probe.naturalHeight}px`; URL.revokeObjectURL(url); };
+    probe.src = url;
+
+    rebuildDataTransfer();
+  }
+
+  function removeCard(card) {
+    const id = card.dataset.id;
     const idx = state.items.findIndex(x => x.id === id);
-    if (idx >= 0) {
-      URL.revokeObjectURL(state.items[idx].url);
-      state.items.splice(idx, 1);
-      grid.querySelector(`.opuc-card[data-id="${id}"]`)?.remove();
-      rebuildDataTransfer();
-    }
-  }
-
-  function swapByIds(aId, bId) {
-    if (aId === bId) return;
-    const a = state.items.findIndex(x => x.id === aId);
-    const b = state.items.findIndex(x => x.id === bId);
-    if (a < 0 || b < 0) return;
-    [state.items[a], state.items[b]] = [state.items[b], state.items[a]];
-    const aNode = grid.querySelector(`.opuc-card[data-id="${aId}"]`);
-    const bNode = grid.querySelector(`.opuc-card[data-id="${bId}"]`);
-    if (aNode && bNode) {
-      const aNext = aNode.nextSibling, bNext = bNode.nextSibling;
-      grid.insertBefore(aNode, bNext);
-      grid.insertBefore(bNode, aNext);
-    }
+    if (idx >= 0) state.items.splice(idx, 1);
+    card.remove();
     rebuildDataTransfer();
   }
 
-  function clearAll() {
-    state.items.forEach(it => URL.revokeObjectURL(it.url));
-    state.items = [];
-    grid.innerHTML = '';
-    rebuildDataTransfer();
+  // ----- Resize prompt -----
+  function promptResize(card, file) {
+    const val = prompt('Zadejte procenta (např. 50) nebo rozměry (800x600, 800x, x600):', '50');
+    if (!val) return;
+    const percent = /^([1-9][0-9]?|100)$/;
+    const fixed = /^(\d+)[xX](\d+)$/;
+    const oneSide = /^(\d+)[xX]$|^[xX](\d+)$/;
+
+    const img = new Image();
+    img.onload = async () => {
+      let nw, nh;
+      if (percent.test(val)) { const s = parseInt(val,10); nw = Math.round(img.naturalWidth*s/100); nh = Math.round(img.naturalHeight*s/100); }
+      else if (fixed.test(val)) { const m = val.match(fixed); nw = parseInt(m[1],10); nh = parseInt(m[2],10); }
+      else if (oneSide.test(val)) {
+        const m = val.match(oneSide);
+        if (m[1]) { nw = parseInt(m[1],10); nh = Math.round(img.naturalHeight*(nw/img.naturalWidth)); }
+        else { nh = parseInt(m[2],10); nw = Math.round(img.naturalWidth*(nh/img.naturalHeight)); }
+      } else { alert('Neplatný formát. Příklad: 50  |  800x600  |  800x  |  x600'); return; }
+
+      const canvas = document.createElement('canvas'); canvas.width = Math.max(1, Math.floor(nw)); canvas.height = Math.max(1, Math.floor(nh));
+      const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      const wantJPEG = /jpe?g$/i.test(file.name) || /jpeg/.test(file.type);
+      const mime = wantJPEG ? 'image/jpeg' : (file.type || 'image/png');
+      const quality = wantJPEG ? (Number(inpJq.value)||0.9) : undefined;
+
+      const blob = await new Promise(res => canvas.toBlob(res, mime, quality));
+      const newName = file.name.replace(/\.(png|jpg|jpeg|webp|bmp|avif)$/i, wantJPEG ? '.jpg' : '.png');
+      const nf = new File([blob], newName, { type: blob.type || mime });
+      replaceFileOnCard(card, nf);
+    };
+    img.src = URL.createObjectURL(file);
   }
 
-  // --- URL → File helpers ---
-  const urlRegex = /(https?:\/\/[^\s"'<>]+?\.(?:png|jpe?g|gif|webp|bmp|avif))(?:[?#][^\s"'<>]*)?/ig;
-  function extractImageUrls(text) {
-    const found = new Set(); let m; while ((m = urlRegex.exec(text))) found.add(m[0]); return Array.from(found);
-  }
-  async function urlToFile(u) {
-    try {
-      const res = await fetch(u, { mode: 'cors' });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const blob = await res.blob();
-      const extFromCT = (blob.type.split('/')[1] || 'jpg').replace('jpeg','jpg');
-      const urlObj = new URL(u);
-      const base = urlObj.pathname.split('/').pop() || `image.${extFromCT}`;
-      const name = /\./.test(base) ? base : `${base}.${extFromCT}`;
-      return new File([blob], name, { type: blob.type || 'image/jpeg' });
-    } catch (e) { O.warn('uploader: fetch URL blocked (CORS?)', u, e); return null; }
-  }
-  async function addFromTextClipboard(text) {
-    const urls = extractImageUrls(text);
-    if (!urls.length) { O.warn('uploader: clipboard text has no image URLs'); return; }
-    O.log(`uploader: URLs detected → ${urls.length}`);
-    const files = [];
-    for (const u of urls) { const f = await urlToFile(u); if (f) files.push(f); }
-    if (files.length) addFiles(files);
+  // ----- Crop modal -----
+  async function openCrop(card, file) {
+    try { await ensureCropper(); } catch { alert('Cropper knihovna nelze načíst.'); return; }
+    if (!window.Cropper) { alert('Cropper není k dispozici.'); return; }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const modal = document.createElement('div');
+      modal.className = 'opuc-crop-modal';
+      modal.innerHTML = `
+        <div class="opuc-crop-content">
+          <img class="opuc-crop-img" src="${reader.result}">
+          <div class="opuc-crop-bar">
+            <button class="opuc-btn" data-act="ok">Oříznout</button>
+            <span class="opuc-flex"></span>
+            <button class="opuc-btn" data-act="cancel">Zrušit</button>
+          </div>
+        </div>`;
+      document.body.appendChild(modal);
+
+      const img = modal.querySelector('.opuc-crop-img');
+      const cropper = new window.Cropper(img, { viewMode: 1, autoCropArea: 1 });
+
+      const close = () => { try { cropper.destroy(); } catch {} modal.remove(); };
+
+      modal.querySelector('[data-act="cancel"]').onclick = close;
+      modal.querySelector('[data-act="ok"]').onclick = async () => {
+        const canvas = cropper.getCroppedCanvas();
+        if (!canvas) return;
+        const wantJPEG = /jpe?g$/i.test(file.name) || /jpeg/.test(file.type);
+        const blob = await new Promise(res => canvas.toBlob(res, wantJPEG ? 'image/jpeg' : 'image/png', wantJPEG ? (Number(inpJq.value)||0.9) : undefined));
+        const newName = file.name.replace(/\.(png|jpg|jpeg|webp|bmp|avif)$/i, wantJPEG ? '.jpg' : '.png');
+        const nf = new File([blob], newName, { type: blob.type });
+        replaceFileOnCard(card, nf);
+        close();
+      };
+    };
+    reader.readAsDataURL(file);
   }
 
-  // Resize utility
-  async function maybeResize(file) {
-    const maxpx = Math.max(256, Math.min(12000, Number(inpMaxpx.value) || state.resizeMaxPx));
-    const jq = Math.max(0.5, Math.min(0.99, Number(inpJq.value) || state.jpegQuality));
+  // ----- events -----
+  function wireGridEvents() {
+    grid.addEventListener('click', (e) => {
+      const card = e.target.closest('.opuc-card'); if (!card) return;
+      const item = findItem(card.dataset.id); if (!item) return;
 
-    const img = await new Promise((res, rej) => {
-      const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = URL.createObjectURL(file);
+      if (e.target.closest('.opuc-remove')) return removeCard(card);
+      if (e.target.closest('.opuc-resize')) return promptResize(card, item.file);
+      if (e.target.closest('.opuc-crop'))   return openCrop(card, item.file);
+      // FAB overlay clicks map to the same actions
+      const fab = e.target.closest('.opuc-fab'); if (fab) {
+        const spans = [...fab.querySelectorAll('span')];
+        if (e.target === spans[0]) return openCrop(card, item.file);
+        if (e.target === spans[1]) return promptResize(card, item.file);
+        if (e.target === spans[2]) return removeCard(card);
+      }
     });
-    const { naturalWidth: w, naturalHeight: h } = img;
-    const scale = state.resizeEnabled ? Math.min(1, maxpx / Math.max(w, h)) : 1;
-    if (scale >= 1) return file;
 
-    const cw = Math.round(w * scale), ch = Math.round(h * scale);
-    const canvas = document.createElement('canvas'); canvas.width = cw; canvas.height = ch;
-    const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, cw, ch);
-
-    const wantJPEG = /jpe?g$/i.test(file.name) || /jpeg/i.test(file.type);
-    const mime = wantJPEG ? 'image/jpeg' : (file.type || 'image/png');
-    const quality = wantJPEG ? jq : undefined;
-
-    const blob = await new Promise(res => canvas.toBlob(res, mime, quality));
-    const newName = file.name.replace(/\.(png|jpg|jpeg|webp|bmp|avif)$/i, wantJPEG ? '.jpg' : '.$1');
-    const nf = new File([blob], newName, { type: blob.type });
-    // reflect dims + size
-    const card = grid.querySelector(`.opuc-card[data-id="${state.items.find(it => it.file === file)?.id}"]`);
-    if (card) {
-      // if we didn’t find the card by reference, leave old dims; it’s cosmetic
-      card.querySelector('.size').textContent = `${(nf.size/1024).toFixed(1)} kB`;
-      // leave dims as-is or mark approximate
-      card.querySelector('.dims').textContent = `${cw}×${ch}px`;
-    }
-    return nf;
+    grid.addEventListener('dragstart', e => {
+      const card = e.target.closest('.opuc-card'); if (!card) return;
+      state.draggingId = card.dataset.id; card.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move';
+    });
+    grid.addEventListener('dragend',   e => { const c = e.target.closest('.opuc-card'); c && c.classList.remove('dragging'); state.draggingId = null; });
+    grid.addEventListener('dragover',  e => {
+      e.preventDefault();
+      const over = e.target.closest('.opuc-card'); if (!over) return;
+      const a = state.draggingId, b = over.dataset.id; if (!a || !b || a===b) return;
+      const aIdx = state.items.findIndex(x => x.id === a);
+      const bIdx = state.items.findIndex(x => x.id === b);
+      if (aIdx<0 || bIdx<0) return;
+      [state.items[aIdx], state.items[bIdx]] = [state.items[bIdx], state.items[aIdx]];
+      const aNode = grid.querySelector(`.opuc-card[data-id="${a}"]`);
+      const bNode = grid.querySelector(`.opuc-card[data-id="${b}"]`);
+      const ref = (aNode.compareDocumentPosition(bNode) & Node.DOCUMENT_POSITION_FOLLOWING) ? bNode.nextSibling : aNode;
+      grid.insertBefore(aNode, bNode);
+      grid.insertBefore(bNode, ref);
+      rebuildDataTransfer();
+    });
   }
 
-  async function processAllIfNeeded() {
-    const total = state.items.length; if (!total) return;
-    progWrap.hidden = false; let done = 0;
-    for (const it of state.items) {
-      try { it.file = await maybeResize(it.file); } catch (e) { O.warn('uploader: resize failed', e); }
-      done++; const pct = Math.round((done / total) * 100);
-      progBar.style.width = pct + '%'; progLabel.textContent = pct + '%';
-      await new Promise(r => setTimeout(r, 0));
-    }
-    setTimeout(() => { progWrap.hidden = true; }, 200);
-  }
-
-  async function pushAndSubmit() {
-    if (!state.items.length) { O.warn('uploader: empty queue'); return; }
-
-    await processAllIfNeeded();
-
-    if (state.dt) {
-      // Classic path: DataTransfer → assign → click submit
-      try {
-        let dt = new DataTransfer();
-        state.items.forEach(it => { try { dt.items.add(it.file); } catch {} });
-        fileInput.multiple = true; fileInput.files = dt.files;
-        O.log(`uploader: pushed ${state.items.length} file(s) → submitting form`);
-        const submit = form.querySelector('input[type="submit"], button[type="submit"], input[name^="tl_"]');
-        if (submit) submit.click(); else form.submit();
-      } catch (e) { O.err('uploader: push/submit failed', e); }
-      return;
-    }
-
-    // Fallback path: build FormData and POST; then render server response
-    try {
-      const fd = new FormData(form);
-      // overwrite file/url fields
-      fd.delete('obrazek'); fd.delete('obrazek[]'); fd.delete('url');
-      for (const it of state.items) fd.append('obrazek[]', it.file, it.file.name);
-
-      const resp = await fetch(form.action || location.href, {
-        method: 'POST',
-        body: fd,
-        credentials: 'include',
-      });
-      const html = await resp.text();
-      O.log('uploader: posted via fetch; rendering response');
-      document.open(); document.write(html); document.close();
-    } catch (e) {
-      O.err('uploader: fetch submit failed', e);
-      alert('Odeslání se nezdařilo. Zkuste prosím znovu, nebo dočasně použijte původní formulář.');
-    }
-  }
-
-  // ----- Events -----
-  hiddenPicker.addEventListener('change', e => addFiles(e.target.files));
-  host.querySelector('#opuc-add').addEventListener('click', () => hiddenPicker.click());
-
+  // Drop / paste
   ;['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('hover'); }));
   ;['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('hover'); }));
   drop.addEventListener('drop', e => {
@@ -337,53 +349,119 @@
     }
   });
 
-  // Paste: files or URLs
   document.addEventListener('paste', e => {
     const items = e.clipboardData?.items || [];
     const imgs = [];
     for (const it of items) if (it.kind === 'file' && /^image\//i.test(it.type)) imgs.push(it.getAsFile());
-    if (imgs.length) { O.log(`uploader: paste → ${imgs.length} image(s)`); addFiles(imgs); }
-    else {
-      const text = e.clipboardData?.getData('text/plain');
-      if (text) addFromTextClipboard(text);
-    }
+    if (imgs.length) { e.preventDefault(); addFiles(imgs); return; }
+    const text = e.clipboardData?.getData('text/plain');
+    if (text) addFromTextClipboard(text);
   });
   host.querySelector('#opuc-paste').addEventListener('click', async () => {
-    try { const text = await navigator.clipboard.readText(); if (text) await addFromTextClipboard(text); else O.warn('uploader: clipboard empty'); }
-    catch (e) { O.warn('uploader: clipboard readText failed (permission?)', e); }
+    try { const text = await navigator.clipboard.readText(); if (text) await addFromTextClipboard(text); } catch {}
   });
 
-  // Card ops
-  grid.addEventListener('click', e => {
-    const btn = e.target.closest('button.opuc-icon.remove'); if (!btn) return;
-    const card = e.target.closest('.opuc-card'); removeById(card.dataset.id);
-  });
+  // URL intake
+  const urlRegex = /(https?:\/\/[^\s"'<>]+?\.(?:png|jpe?g|gif|webp|bmp|avif))(?:[?#][^\s"'<>]*)?/ig;
+  function extractImageUrls(text) { const s=new Set(); let m; while ((m=urlRegex.exec(text))) s.add(m[0]); return [...s]; }
+  async function urlToFile(u) {
+    try {
+      const res = await fetch(u, { mode: 'cors' });
+      if (!res.ok) throw 0;
+      const blob = await res.blob();
+      const ext = (blob.type.split('/')[1] || 'jpg').replace('jpeg','jpg');
+      const base = (new URL(u)).pathname.split('/').pop() || `image.${ext}`;
+      const name = /\./.test(base) ? base : `${base}.${ext}`;
+      return new File([blob], name, { type: blob.type || 'image/jpeg' });
+    } catch { return null; }
+  }
+  async function addFromTextClipboard(text) {
+    const urls = extractImageUrls(text);
+    if (!urls.length) return;
+    const out = [];
+    for (const u of urls) { const f = await urlToFile(u); if (f) out.push(f); }
+    if (out.length) addFiles(out);
+  }
 
-  // Drag reorder
-  grid.addEventListener('dragstart', e => {
-    const card = e.target.closest('.opuc-card'); if (!card) return;
-    state.draggingId = card.dataset.id; card.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move';
-  });
-  grid.addEventListener('dragend',   e => { const c = e.target.closest('.opuc-card'); c && c.classList.remove('dragging'); state.draggingId = null; });
-  grid.addEventListener('dragover',  e => { e.preventDefault(); const over = e.target.closest('.opuc-card'); if (!over) return; const a = state.draggingId; const b = over.dataset.id; if (a && b && a !== b) swapByIds(a, b); });
+  // Pre-push resize-all
+  async function maybeResize(file) {
+    if (!state.resizeEnabled) return file;
+    const maxpx = Math.max(256, Math.min(12000, Number(inpMaxpx.value) || state.resizeMaxPx));
+    const jq = Math.max(0.5, Math.min(0.99, Number(inpJq.value) || state.jpegQuality));
 
-  // Toolbar
-  host.querySelector('#opuc-clear').addEventListener('click', clearAll);
+    const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = URL.createObjectURL(file); });
+    const w=img.naturalWidth, h=img.naturalHeight, s = Math.min(1, maxpx/Math.max(w,h));
+    if (s >= 1) return file;
+
+    const cw = Math.round(w*s), ch = Math.round(h*s);
+    const canvas = document.createElement('canvas'); canvas.width = cw; canvas.height = ch;
+    const ctx = canvas.getContext('2d'); ctx.drawImage(img,0,0,cw,ch);
+
+    const wantJPEG = /jpe?g$/i.test(file.name) || /jpeg/i.test(file.type);
+    const mime = wantJPEG ? 'image/jpeg' : (file.type || 'image/png');
+    const quality = wantJPEG ? jq : undefined;
+
+    const blob = await new Promise(res => canvas.toBlob(res, mime, quality));
+    const newName = file.name.replace(/\.(png|jpg|jpeg|webp|bmp|avif)$/i, wantJPEG ? '.jpg' : '.png');
+    return new File([blob], newName, { type: blob.type || mime });
+  }
+
+  async function processAllIfNeeded() {
+    const total = state.items.length; if (!total) return;
+    progWrap.hidden = false; let done = 0;
+    for (const it of state.items) {
+      try { it.file = await maybeResize(it.file); } catch {}
+      done++; const pct = Math.round((done/total)*100);
+      progBar.style.width = pct + '%'; progLabel.textContent = pct + '%';
+      await new Promise(r => setTimeout(r, 0));
+    }
+    setTimeout(() => { progWrap.hidden = true; }, 200);
+  }
+
+  async function pushAndSubmit() {
+    if (!state.items.length) { O.warn('uploader: empty queue'); return; }
+    await processAllIfNeeded();
+
+    if (state.dt) {
+      try {
+        let dt = new DataTransfer();
+        state.items.forEach(it => { try { dt.items.add(it.file); } catch {} });
+        fileInput.multiple = true; fileInput.files = dt.files;
+        const submit = form.querySelector('input[type="submit"], button[type="submit"], input[name^="tl_"]');
+        if (submit) submit.click(); else form.submit();
+      } catch (e) { O.err('uploader: push/submit failed', e); }
+      return;
+    }
+
+    try {
+      const fd = new FormData(form);
+      fd.delete('obrazek'); fd.delete('obrazek[]'); fd.delete('url');
+      for (const it of state.items) fd.append('obrazek[]', it.file, it.file.name);
+
+      const resp = await fetch(form.action || location.href, { method: 'POST', body: fd, credentials: 'include' });
+      const html = await resp.text();
+      document.open(); document.write(html); document.close();
+    } catch (e) {
+      O.err('uploader: fetch submit failed', e);
+      alert('Odeslání se nezdařilo. Zkuste to znovu nebo použijte původní formulář.');
+    }
+  }
+
+  // wire UI
+  hiddenPicker.addEventListener('change', e => addFiles(e.target.files));
+  host.querySelector('#opuc-add').addEventListener('click', () => hiddenPicker.click());
+  host.querySelector('#opuc-clear').addEventListener('click', () => { state.items = []; grid.innerHTML = ''; rebuildDataTransfer(); });
   host.querySelector('#opuc-push').addEventListener('click', pushAndSubmit);
   autosync.addEventListener('change', () => { state.autoSync = autosync.checked; if (state.autoSync) rebuildDataTransfer(); });
-
   inpResize.addEventListener('change', () => state.resizeEnabled = inpResize.checked);
   inpMaxpx.addEventListener('change', () => state.resizeMaxPx = Math.max(256, Math.min(12000, Number(inpMaxpx.value)||2048)));
   inpJq.addEventListener('input',  () => state.jpegQuality = Math.max(0.5, Math.min(0.99, Number(inpJq.value)||0.9)));
 
-  // If user picks files in original input (should be hidden), import them anyway
-  fileInput.addEventListener('change', () => {
-    if (fileInput.files?.length) {
-      O.log(`uploader: importing ${fileInput.files.length} file(s) from native input`);
-      addFiles(fileInput.files);
-      try { fileInput.value = ''; } catch {}
-    }
-  });
+  fileInput.addEventListener('change', () => { if (fileInput.files?.length) { addFiles(fileInput.files); try { fileInput.value = ''; } catch {} } });
 
-  updateCount();
+  wireGridEvents();
+  // safety: if something replaced nodes, restore ops bars
+  const mo = new MutationObserver(() => ensureOpsBars());
+  mo.observe(grid, { childList: true, subtree: true });
+  ensureOpsBars();
 })();
