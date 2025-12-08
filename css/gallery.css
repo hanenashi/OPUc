@@ -1,14 +1,44 @@
 /* css/gallery.css */
 
-/* Ensure Swipebox overlay never shows even if some script tries */
-#swipebox-overlay, #swipebox-container, #swipebox-slider {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
+/* Selected tiles */
+.box.selected, .boxtop.selected {
+  border: 1px solid #fff !important;
+  background-color: #333 !important;
 }
 
-/* Keep thumbnails clickable in bare mode (if any site CSS zeroes them) */
-html.opuc-bare a img {
-  cursor: pointer !important;
+/* Placeholder for animated thumbs (.gif/.webp) */
+.anim-placeholder {
+  max-width: 200px;
+  max-height: 160px;
+  width: 200px;
+  height: 160px;
+  border: 1px solid #666;
+  margin-top: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000;
+  color: #fff;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 16px;
+  margin: auto;
+}
+.anim-placeholder:hover { border: 1px solid #fff; }
+
+/* Loading overlay for multi-page fetch */
+.opuc-loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2147483600;
+}
+.opuc-loading-overlay.active { display: flex; }
+.opuc-loading-text {
+  color: #fff;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 22px;
+  font-weight: 700;
 }

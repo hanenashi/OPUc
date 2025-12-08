@@ -5,8 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
 
+## [0.3.8] - 2025-12-09
+### Added
+- Gallery: range/multi-select with visible `.selected` tiles.
+- Gallery: optional `.gif/.webp` placeholder for large sets.
+- Gallery: auto-load further pages until a target count (configurable delay).
+- Settings: new Gallery section (target items, per-page delay, placeholder toggle).
 
+### Notes
+- Features adapted from prior OPUx enhancements. 
 
+---
 
 ## [0.3.7] - 2025-12-09
 ### Fixed

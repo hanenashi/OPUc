@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         OPUc
 // @namespace    https://opu.peklo.biz/
-// @version      0.3.7
-// @description  OPU overhaul with modular router, themes, bare mode, and tile editor
+// @version      0.3.8
+// @description  OPU overhaul with modular router, themes, bare mode, uploader tile editor, and gallery boosts
 // @match        https://opu.peklo.biz/*
 // @run-at       document-end
 // @noframes
@@ -14,8 +14,8 @@
 (function () {
   'use strict';
 
-  const OPUC_VERSION = '0.3.7';
-  const BUILD_SALT = 'b307-' + Math.floor(Date.now()/60000); // changes every minute
+  const OPUC_VERSION = '0.3.8';
+  const BUILD_SALT = 'b308-' + Math.floor(Date.now()/60000);
   window.OPUc = window.OPUc || {};
   window.OPUc.version = OPUC_VERSION;
 
@@ -44,6 +44,7 @@
 
     await loadCSS('css/base.css');
     await loadCSS('css/uploader.css');
+    await loadCSS('css/gallery.css');    // <- new
     await loadScript('modules/utils.js');
     await loadScript('modules/router.js');
   })().catch(err => console.error('[OPUc] boot error:', err));
