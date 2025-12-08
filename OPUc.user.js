@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         OPUc
 // @namespace    https://opu.peklo.biz/
-// @version      0.3.10
+// @version      0.3.11
 // @description  OPU overhaul with modular router, themes, bare mode, uploader tile editor, and gallery boosts
 // @match        https://opu.peklo.biz/*
 // @run-at       document-end
@@ -13,15 +13,12 @@
 
 (function () {
   'use strict';
-
-  const OPUC_VERSION = '0.3.10';
-  const BUILD_SALT = 'b310-' + Math.floor(Date.now()/60000);
-
+  const OPUC_VERSION = '0.3.11';
+  const BUILD_SALT = 'b311-' + Math.floor(Date.now()/60000);
   window.OPUc = window.OPUc || {};
   window.OPUc.version = OPUC_VERSION;
 
   const DEV_BASE = 'https://raw.githubusercontent.com/hanenashi/OPUc/main/';
-
   async function loadText(path){ const url=DEV_BASE+path+`?v=${BUILD_SALT}`; const r=await fetch(url,{cache:'no-store'}); if(!r.ok) throw new Error(`Fetch failed: ${url} [${r.status}]`); return r.text(); }
   async function loadScript(path){ (0,eval)(await loadText(path)); }
   async function loadCSS(path){ const css=await loadText(path); const el=document.createElement('style'); el.setAttribute('data-opuc',path); el.textContent=css; document.head.appendChild(el); return el; }

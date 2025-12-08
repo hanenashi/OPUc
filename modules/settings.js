@@ -1,10 +1,16 @@
 // modules/settings.js
 (function () {
   const O = window.OPUc; if (!O) return;
-  O.log('settings: init two-column + theme + bare + gallery controls');
+  O.log('settings: init two-column + theme + bare + gallery controls (native per-page hidden)');
 
   const left = document.querySelector('.ussetmain') || document.querySelector('form[action*="settings"]')?.closest('div') || document.querySelector('#content') || document.body;
   const parent = left.parentElement;
+
+  // Hide native "items per page" select(s)
+  document.querySelectorAll('select[name="pocet_prispevku"]').forEach(sel=>{
+    sel.closest('.usset, .ussetmarg2')?.classList.add('opuc-hide-native-perpage');
+    sel.classList.add('opuc-hide-native-perpage');
+  });
 
   // Wrap as two columns
   let wrap = parent.querySelector('.opuc-settings-wrap');
@@ -36,7 +42,7 @@
       <hr style="border:none;border-top:1px solid var(--opuc-border,#ddd);margin:10px 0;" />
 
       <section class="opuc-field">
-        <label class="opuc-label">Galerie – načítání</label>
+        <label class="opuc-label">Galerie – na stránku (OPUc)</label>
         <div class="opuc-radio" style="gap:6px;flex-wrap:wrap">
           <label><input type="radio" name="opuc-gal-target" value="50"> 50</label>
           <label><input type="radio" name="opuc-gal-target" value="100"> 100</label>
@@ -62,21 +68,17 @@
   wrap.appendChild(pane);
 
   const cfg = O.getSettings();
-  // defaults
   const defaults = { bareMode:false, theme:'dark', gallery:{ target:100, delay:500, placeholders:true } };
   const merged = { ...defaults, ...cfg, gallery:{ ...defaults.gallery, ...(cfg.gallery||{}) } };
 
-  // Bare
   const bare = pane.querySelector('#opuc-bare'); bare.checked = !!merged.bareMode;
   bare.addEventListener('change', () => O.setBareMode(bare.checked));
 
-  // Theme
   pane.querySelectorAll('input[name="opuc-theme"]').forEach(r=>{
     r.checked = (r.value === (merged.theme||'dark'));
     r.addEventListener('change', ()=>{ O.set({theme:r.value}); O.applyTheme(r.value); });
   });
 
-  // Gallery target
   pane.querySelectorAll('input[name="opuc-gal-target"]').forEach(r=>{
     r.checked = (Number(r.value) === Number(merged.gallery.target||100));
     r.addEventListener('change', ()=>{
@@ -84,7 +86,6 @@
     });
   });
 
-  // Delay
   const delay = pane.querySelector('#opuc-gal-delay');
   delay.value = Number(merged.gallery.delay||500);
   delay.addEventListener('change', ()=>{
@@ -93,14 +94,12 @@
     delay.value = v;
   });
 
-  // Placeholders
   const ph = pane.querySelector('#opuc-gal-placeholders');
   ph.checked = !!merged.gallery.placeholders;
   ph.addEventListener('change', ()=>{
     const s = O.getSettings(); s.gallery = s.gallery||{}; s.gallery.placeholders = !!ph.checked; O.saveSettings(s);
   });
 
-  // Reset
   pane.querySelector('#opuc-reset').addEventListener('click', ()=>{
     O.setBareMode(false);
     O.set({ theme:'dark', gallery:{...defaults.gallery} });

@@ -21,6 +21,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Internal
 - Userscript loader kept identical; helpers slightly compacted earlier—restored to readable formatting for clearer diffs.
 
+
+
+
+---
+
+## [0.3.11] - 2025-12-09
+### Changed
+- Gallery uses **virtual paging** based on OPUc “items per view.” The site’s own per-page setting is ignored and hidden.
+### Added
+- Total items detection (fetches last page) to compute correct virtual page count.
+- Pager now shows `Page n / N` for your chosen view size (e.g., 1000 → often 1/1).
+
+
 ---
 
 ## [0.3.8] - 2025-12-09
