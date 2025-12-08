@@ -1,0 +1,119 @@
+/* css/base.css */
+
+/* ---------- Theme variables (card-style base, used by OPUc components) ---------- */
+html.opuc-theme-dark {
+  --opuc-bg: #0b1116;
+  --opuc-fg: #e7ebf0;
+  --opuc-muted: #9aa4af;
+  --opuc-border: #2a3440;
+  --opuc-card-bg: #0f151b;
+  --opuc-card-border: #2a3440;
+
+  --opuc-btn-bg: #1b2430;
+  --opuc-btn-fg: #f3f6f9;
+  --opuc-btn-bg-hover: #223041;
+
+  --opuc-link: #8ab4f8;
+  --opuc-link-hover: #b3d1ff;
+}
+
+html.opuc-theme-light {
+  --opuc-bg: #f7fafc;
+  --opuc-fg: #0b1220;
+  --opuc-muted: #4b5563;
+  --opuc-border: #d5dbe3;
+  --opuc-card-bg: #ffffff;
+  --opuc-card-border: #cfd8e3;
+
+  --opuc-btn-bg: #e9eef5;
+  --opuc-btn-fg: #0b1220;
+  --opuc-btn-bg-hover: #dfe7f1;
+
+  --opuc-link: #0645ad;
+  --opuc-link-hover: #0b63d1;
+}
+
+/* ---------- Apply theme to page when not in bare mode ---------- */
+html.opuc-theme-dark:not(.opuc-bare) body {
+  background: var(--opuc-bg) !important;
+  color: var(--opuc-fg) !important;
+}
+html.opuc-theme-light:not(.opuc-bare) body {
+  background: var(--opuc-bg) !important;
+  color: var(--opuc-fg) !important;
+}
+html.opuc-theme-dark:not(.opuc-bare) a { color: var(--opuc-link) !important; }
+html.opuc-theme-light:not(.opuc-bare) a { color: var(--opuc-link) !important; }
+html:not(.opuc-bare) a:hover { color: var(--opuc-link-hover) !important; }
+
+/* ---------- Bare mode skeleton ---------- */
+html.opuc-bare, html.opuc-bare body {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif !important;
+}
+html.opuc-bare * {
+  background: transparent !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  border-radius: 0 !important;
+  outline: none !important;
+}
+html.opuc-bare body, html.opuc-bare div, html.opuc-bare section, html.opuc-bare article,
+html.opuc-bare header, html.opuc-bare footer, html.opuc-bare main, html.opuc-bare nav,
+html.opuc-bare p, html.opuc-bare ul, html.opuc-bare ol, html.opuc-bare li,
+html.opuc-bare h1, html.opuc-bare h2, html.opuc-bare h3, html.opuc-bare h4, html.opuc-bare h5, html.opuc-bare h6,
+html.opuc-bare form, html.opuc-bare label, html.opuc-bare input, html.opuc-bare select, html.opuc-bare textarea, html.opuc-bare button,
+html.opuc-bare table, html.opuc-bare tr, html.opuc-bare td, html.opuc-bare th {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  color: inherit !important;
+  font: inherit !important;
+}
+html.opuc-bare a { text-decoration: underline !important; }
+html.opuc-bare img, html.opuc-bare video, html.opuc-bare canvas, html.opuc-bare svg {
+  max-width: none !important;
+  height: auto !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+html.opuc-bare div, html.opuc-bare section, html.opuc-bare article, html.opuc-bare main, html.opuc-bare header, html.opuc-bare footer, html.opuc-bare nav {
+  display: block !important;
+}
+html.opuc-bare input, html.opuc-bare select, html.opuc-bare textarea, html.opuc-bare button {
+  border: 1px solid #ddd !important;
+  padding: 6px 8px !important;
+  background: #fff !important;
+}
+html.opuc-bare table { border-collapse: collapse !important; }
+html.opuc-bare th, html.opuc-bare td { border: 1px solid #e5e5e5 !important; padding: 6px 8px !important; }
+html.opuc-bare body { padding: 12px !important; }
+
+/* Route badge */
+html[data-opuc-route]:after {
+  content: attr(data-opuc-route) ' mode';
+  position: fixed; right: 8px; bottom: 8px;
+  font: 12px/1 system-ui, sans-serif;
+  color: #333; background: #eee; padding: 2px 6px; border: 1px solid #ddd;
+  opacity: .8; z-index: 2147483000;
+}
+
+/* Bare-mode: hide legacy progress spinner gif */
+html.opuc-bare img[src*="templates/design/progress2.gif"],
+html.opuc-bare [style*="templates/design/progress2.gif"] {
+  display: none !important;
+}
+
+/* Optional: minimal textual progress stub */
+html.opuc-bare .progress,
+html.opuc-bare .uploading,
+html.opuc-bare #progress {
+  background: var(--opuc-pb-bg, #fff) !important;
+  border: 1px solid #ddd !important;
+  padding: 6px 8px !important;
+  font: 12px/1 system-ui, sans-serif !important;
+  color: #333 !important;
+}
+
+/* Ensure hidden attribute always wins, even in bare mode */
+[hidden] { display: none !important; }
+html.opuc-bare [hidden] { display: none !important; }

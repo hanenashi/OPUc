@@ -1,0 +1,14 @@
+/* css/gallery.css */
+
+/* Ensure Swipebox overlay never shows even if some script tries */
+#swipebox-overlay, #swipebox-container, #swipebox-slider {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Keep thumbnails clickable in bare mode (if any site CSS zeroes them) */
+html.opuc-bare a img {
+  cursor: pointer !important;
+}

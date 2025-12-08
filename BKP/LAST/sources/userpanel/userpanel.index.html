@@ -1,0 +1,322 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+
+<head>
+<title>Okoun Picture Uploader</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Language" content="cs">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="description" content="Okoun Picture Uploader">
+<meta name="author" content="Lucifer & Radar">
+<meta name="robots" content="index, follow">
+<meta name="googlebot" content="index, follow, snippet, archive">
+<meta name="Copyright" content="Radar, Lucifer &amp; spol. s r.o.">
+<link href="https://fonts.googleapis.com/css?family=Roboto:400,700|Merriweather:400,700&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="stylesheet" href="templates/css/styly-main.css?opu250227">
+<link rel="stylesheet" href="templates/css/styly-responsive.css?opu250227">
+<script type="text/javascript" src="templates/js/jquery.js?opu250227"></script>
+<script type="text/javascript" src="templates/js/jscript.js?opu250227"></script>
+<style>
+.custom-alert {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	min-width: 300px;
+    max-width: 90%;
+	transform: translate(-50%, -50%);
+	background-color: #f8d7da;
+	color: #842029;
+	padding: 30px 40px;
+	border-radius: 8px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	font-family: Arial, sans-serif;
+	font-size: 14px;
+	text-align: center;
+	z-index: 1000;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	opacity: 1;
+	filter: none;
+	background-image: none;
+}
+
+.custom-alert .ok-btn {
+	margin-top: 15px;
+	padding: 10px 20px;
+	font-size: 16px;
+	background-color: #842029;
+	color: #ffffff;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.custom-alert .close-btn {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	background: none;
+	border: none;
+	font-size: 18px;
+	font-weight: bold;
+	color: #000000;
+	cursor: pointer;
+}
+
+.custom-alert .ok-btn:hover {
+	background-color: #5a1a1e;
+}
+
+.custom-alert.fade-out {
+	opacity: 0;
+	transition: opacity 0.5s ease;
+}
+</style>
+</head>
+
+<body>
+
+<div class="parent">
+
+<div class="chi2">&nbsp;</div>
+
+<div class="child">
+<font class="nadpic">&nbsp;</font>
+
+<div class="opunadpis">
+		<a href="?page=userpanel"><img src="templates/design/default-icon.jpg" class="ico" align="top"></a>
+
+	<span class="opunadpis-wrap ">
+		<a href="https://opu.peklo.biz/" class="opu"><font class="podnadpic">O</font>koun <font class="podnadpic">P</font>icture <font class="podnadpic">U</font>ploader</a>
+	</span>
+
+		<div class="userpanel">
+			<a href="?page=userpanel" class="opu1">blasnik</a> 
+			<a href="?page=settings" class="opu1 small">[ nastavení ]</a> 
+			<a href="?page=relace" class="opu1 small">[ relace ]</a> 
+			<a href="?page=odhlaseni" class="opu1 small">[ odhlásit ]</a>
+		</div>
+</div>
+
+
+<link rel="stylesheet" href="templates/css/styly-hack.css">
+
+
+
+<form action="" method="post" class="form">
+
+	<div class="pages">
+		Vybrané: 
+		<button class="button" type="submit" name="tl_download" id="tl_download_top" style="width: 64px;">stáhnout</button>
+		<button class="button" type="submit" name="tl_smazat" id="tl_smazat_top" style="width: 64px;">smazat</button>
+		&nbsp;&nbsp;
+		<button name="collect_htmlcode_checked_up" type="button" data-target="htmlcode_" class="copy-btn" style="width: 64px;">&lt;img&gt;</button>
+		<button name="collect_html_checked_up" type="button" data-target="html_" class="copy-btn" style="width: 64px;">URL</button>
+		<button name="collect_link_checked_up" type="button" data-target="link_" class="copy-btn" style="width: 64px;">&lt;a href&gt;</button>
+	</div>
+
+	<div class="pagiup">
+	
+<div class="pagination">
+<label class="vybrana">1</label><label><a href="?page=userpanel&amp;recordStart=2">2</a></label><label><a href="?page=userpanel&amp;recordStart=3">3</a></label><label><a href="?page=userpanel&amp;recordStart=4">4</a></label><label><a href="?page=userpanel&amp;recordStart=5">5</a></label><label><a href="?page=userpanel&amp;recordStart=6">6</a></label><label><a href="?page=userpanel&amp;recordStart=7">7</a></label><label>...</label><label><a href="?page=userpanel&amp;recordStart=51">51</a></label><label><a href="?page=userpanel&amp;recordStart=2">&#9654;</a></label></div>
+
+	</div>
+
+<br clear="all">
+
+	<div class="box-wrap">
+	<div class="box">
+		<div class="star"><button class="js-star" type="button" id="215689" name="star[]" value="0"></button></div>
+		<p class="chan">19.08.2025 06:02:31</p>
+				<a href="https://opu.peklo.biz/p/25/08/19/1755576150-6e05d.jpeg" class="inbox-wrap swipebox" rel="gallery"><img src="https://opu.peklo.biz/p/25/08/19/thumbs/1755576150-6e05d.jpeg" class="inbox"></a>
+		<div class="pod pod2">301.9 kB .jpeg [1080&nbsp;x&nbsp;2372&nbsp;px]</div>
+		<div class="pod">
+			<input type="hidden" id="htmlcode_215689" value="&lt;img src=&quot;https://opu.peklo.biz/p/25/08/19/1755576150-6e05d.jpeg&quot;&gt;" /><button class="copy-btn width45" type="button" data-target="htmlcode_215689">&lt;img&gt;</button>
+			<input type="hidden" id="html_215689" value="https://opu.peklo.biz/p/25/08/19/1755576150-6e05d.jpeg" /><button class="copy-btn width35" type="button" data-target="html_215689">URL</button>
+			<input type="hidden" id="link_215689" value="&lt;a href=&quot;https://opu.peklo.biz/p/25/08/19/1755576150-6e05d.jpeg&quot;&gt;1755576150-6e05d.jpeg&lt;/a&gt;" /><button class="copy-btn width70" type="button" data-target="link_215689">&lt;a href&gt;</button>
+			<div class="pod1">
+				<input type="checkbox" id="id_215689" name="item[]" value="215689">
+			</div>
+		</div>
+	</div>
+	<div class="box">
+		<div class="star"><button class="js-star" type="button" id="215690" name="star[]" value="0"></button></div>
+		<p class="chan">19.08.2025 06:02:31</p>
+				<a href="https://opu.peklo.biz/p/25/08/19/1755576150-93042.jpeg" class="inbox-wrap swipebox" rel="gallery"><img src="https://opu.peklo.biz/p/25/08/19/thumbs/1755576150-93042.jpeg" class="inbox"></a>
+		<div class="pod pod2">301.9 kB .jpeg [1080&nbsp;x&nbsp;2372&nbsp;px]</div>
+		<div class="pod">
+			<input type="hidden" id="htmlcode_215690" value="&lt;img src=&quot;https://opu.peklo.biz/p/25/08/19/1755576150-93042.jpeg&quot;&gt;" /><button class="copy-btn width45" type="button" data-target="htmlcode_215690">&lt;img&gt;</button>
+			<input type="hidden" id="html_215690" value="https://opu.peklo.biz/p/25/08/19/1755576150-93042.jpeg" /><button class="copy-btn width35" type="button" data-target="html_215690">URL</button>
+			<input type="hidden" id="link_215690" value="&lt;a href=&quot;https://opu.peklo.biz/p/25/08/19/1755576150-93042.jpeg&quot;&gt;1755576150-93042.jpeg&lt;/a&gt;" /><button class="copy-btn width70" type="button" data-target="link_215690">&lt;a href&gt;</button>
+			<div class="pod1">
+				<input type="checkbox" id="id_215690" name="item[]" value="215690">
+			</div>
+		</div>
+	</div>
+	<div class="box">
+		<div class="star"><button class="js-star" type="button" id="215691" name="star[]" value="0"></button></div>
+		<p class="chan">19.08.2025 06:02:31</p>
+				<a href="https://opu.peklo.biz/p/25/08/19/1755576150-2149d.jpeg" class="inbox-wrap swipebox" rel="gallery"><img src="https://opu.peklo.biz/p/25/08/19/thumbs/1755576150-2149d.jpeg" class="inbox"></a>
+		<div class="pod pod2">3.4 MB .jpeg [4928&nbsp;x&nbsp;3264&nbsp;px]</div>
+		<div class="pod">
+			<input type="hidden" id="htmlcode_215691" value="&lt;img src=&quot;https://opu.peklo.biz/p/25/08/19/1755576150-2149d.jpeg&quot;&gt;" /><button class="copy-btn width45" type="button" data-target="htmlcode_215691">&lt;img&gt;</button>
+			<input type="hidden" id="html_215691" value="https://opu.peklo.biz/p/25/08/19/1755576150-2149d.jpeg" /><button class="copy-btn width35" type="button" data-target="html_215691">URL</button>
+			<input type="hidden" id="link_215691" value="&lt;a href=&quot;https://opu.peklo.biz/p/25/08/19/1755576150-2149d.jpeg&quot;&gt;1755576150-2149d.jpeg&lt;/a&gt;" /><button class="copy-btn width70" type="button" data-target="link_215691">&lt;a href&gt;</button>
+			<div class="pod1">
+				<input type="checkbox" id="id_215691" name="item[]" value="215691">
+			</div>
+		</div>
+	</div>
+	<div class="box">
+		<div class="star"><button class="js-star" type="button" id="215692" name="star[]" value="0"></button></div>
+		<p class="chan">19.08.2025 06:02:31</p>
+				<a href="https://opu.peklo.biz/p/25/08/19/1755576150-61cb1.png" class="inbox-wrap swipebox" rel="gallery"><img src="https://opu.peklo.biz/p/25/08/19/thumbs/1755576150-61cb1.png" class="inbox"></a>
+		<div class="pod pod2">647.6 kB .png [1080&nbsp;x&nbsp;2400&nbsp;px]</div>
+		<div class="pod">
+			<input type="hidden" id="htmlcode_215692" value="&lt;img src=&quot;https://opu.peklo.biz/p/25/08/19/1755576150-61cb1.png&quot;&gt;" /><button class="copy-btn width45" type="button" data-target="htmlcode_215692">&lt;img&gt;</button>
+			<input type="hidden" id="html_215692" value="https://opu.peklo.biz/p/25/08/19/1755576150-61cb1.png" /><button class="copy-btn width35" type="button" data-target="html_215692">URL</button>
+			<input type="hidden" id="link_215692" value="&lt;a href=&quot;https://opu.peklo.biz/p/25/08/19/1755576150-61cb1.png&quot;&gt;1755576150-61cb1.png&lt;/a&gt;" /><button class="copy-btn width70" type="button" data-target="link_215692">&lt;a href&gt;</button>
+			<div class="pod1">
+				<input type="checkbox" id="id_215692" name="item[]" value="215692">
+			</div>
+		</div>
+	</div>
+	<div class="box">
+		<div class="star"><button class="js-star" type="button" id="215693" name="star[]" value="0"></button></div>
+		<p class="chan">19.08.2025 06:02:31</p>
+				<a href="https://opu.peklo.biz/p/25/08/19/1755576150-f3863.jpeg" class="inbox-wrap swipebox" rel="gallery"><img src="https://opu.peklo.biz/p/25/08/19/thumbs/1755576150-f3863.jpeg" class="inbox"></a>
+		<div class="pod pod2">29.6 kB .jpeg [320&nbsp;x&nbsp;180&nbsp;px]</div>
+		<div class="pod">
+			<input type="hidden" id="htmlcode_215693" value="&lt;img src=&quot;https://opu.peklo.biz/p/25/08/19/1755576150-f3863.jpeg&quot;&gt;" /><button class="copy-btn width45" type="button" data-target="htmlcode_215693">&lt;img&gt;</button>
+			<input type="hidden" id="html_215693" value="https://opu.peklo.biz/p/25/08/19/1755576150-f3863.jpeg" /><button class="copy-btn width35" type="button" data-target="html_215693">URL</button>
+			<input type="hidden" id="link_215693" value="&lt;a href=&quot;https://opu.peklo.biz/p/25/08/19/1755576150-f3863.jpeg&quot;&gt;1755576150-f3863.jpeg&lt;/a&gt;" /><button class="copy-btn width70" type="button" data-target="link_215693">&lt;a href&gt;</button>
+			<div class="pod1">
+				<input type="checkbox" id="id_215693" name="item[]" value="215693">
+			</div>
+		</div>
+	</div>
+	<div class="box">
+		<div class="star"><button class="js-star" type="button" id="215694" name="star[]" value="0"></button></div>
+		<p class="chan">19.08.2025 06:02:31</p>
+				<a href="https://opu.peklo.biz/p/25/08/19/1755576150-d3b23.jpeg" class="inbox-wrap swipebox" rel="gallery"><img src="https://opu.peklo.biz/p/25/08/19/thumbs/1755576150-d3b23.jpeg" class="inbox"></a>
+		<div class="pod pod2">980.4 kB .jpeg [1871&nbsp;x&nbsp;2609&nbsp;px]</div>
+		<div class="pod">
+			<input type="hidden" id="htmlcode_215694" value="&lt;img src=&quot;https://opu.peklo.biz/p/25/08/19/1755576150-d3b23.jpeg&quot;&gt;" /><button class="copy-btn width45" type="button" data-target="htmlcode_215694">&lt;img&gt;</button>
+			<input type="hidden" id="html_215694" value="https://opu.peklo.biz/p/25/08/19/1755576150-d3b23.jpeg" /><button class="copy-btn width35" type="button" data-target="html_215694">URL</button>
+			<input type="hidden" id="link_215694" value="&lt;a href=&quot;https://opu.peklo.biz/p/25/08/19/1755576150-d3b23.jpeg&quot;&gt;1755576150-d3b23.jpeg&lt;/a&gt;" /><button class="copy-btn width70" type="button" data-target="link_215694">&lt;a href&gt;</button>
+			<div class="pod1">
+				<input type="checkbox" id="id_215694" name="item[]" value="215694">
+			</div>
+		</div>
+	</div>
+	<div class="box">
+		<div class="star"><button class="js-star" type="button" id="215695" name="star[]" value="0"></button></div>
+		<p class="chan">19.08.2025 06:02:31</p>
+				<a href="https://opu.peklo.biz/p/25/08/19/1755576150-a1bb9.jpeg" class="inbox-wrap swipebox" rel="gallery"><img src="https://opu.peklo.biz/p/25/08/19/thumbs/1755576150-a1bb9.jpeg" class="inbox"></a>
+		<div class="pod pod2">1.7 MB .jpeg [2150&nbsp;x&nbsp;2856&nbsp;px]</div>
+		<div class="pod">
+			<input type="hidden" id="htmlcode_215695" value="&lt;img src=&quot;https://opu.peklo.biz/p/25/08/19/1755576150-a1bb9.jpeg&quot;&gt;" /><button class="copy-btn width45" type="button" data-target="htmlcode_215695">&lt;img&gt;</button>
+			<input type="hidden" id="html_215695" value="https://opu.peklo.biz/p/25/08/19/1755576150-a1bb9.jpeg" /><button class="copy-btn width35" type="button" data-target="html_215695">URL</button>
+			<input type="hidden" id="link_215695" value="&lt;a href=&quot;https://opu.peklo.biz/p/25/08/19/1755576150-a1bb9.jpeg&quot;&gt;1755576150-a1bb9.jpeg&lt;/a&gt;" /><button class="copy-btn width70" type="button" data-target="link_215695">&lt;a href&gt;</button>
+			<div class="pod1">
+				<input type="checkbox" id="id_215695" name="item[]" value="215695">
+			</div>
+		</div>
+	</div>
+	<div class="box">
+		<div class="star"><button class="js-star" type="button" id="215684" name="star[]" value="0"></button></div>
+		<p class="chan">19.08.2025 06:02:30</p>
+				<a href="https://opu.peklo.biz/p/25/08/19/1755576150-8b476.jpeg" class="inbox-wrap swipebox" rel="gallery"><img src="https://opu.peklo.biz/p/25/08/19/thumbs/1755576150-8b476.jpeg" class="inbox"></a>
+		<div class="pod pod2">508 kB .jpeg [1024&nbsp;x&nbsp;1024&nbsp;px]</div>
+		<div class="pod">
+			<input type="hidden" id="htmlcode_215684" value="&lt;img src=&quot;https://opu.peklo.biz/p/25/08/19/1755576150-8b476.jpeg&quot;&gt;" /><button class="copy-btn width45" type="button" data-target="htmlcode_215684">&lt;img&gt;</button>
+			<input type="hidden" id="html_215684" value="https://opu.peklo.biz/p/25/08/19/1755576150-8b476.jpeg" /><button class="copy-btn width35" type="button" data-target="html_215684">URL</button>
+			<input type="hidden" id="link_215684" value="&lt;a href=&quot;https://opu.peklo.biz/p/25/08/19/1755576150-8b476.jpeg&quot;&gt;1755576150-8b476.jpeg&lt;/a&gt;" /><button class="copy-btn width70" type="button" data-target="link_215684">&lt;a href&gt;</button>
+			<div class="pod1">
+				<input type="checkbox" id="id_215684" name="item[]" value="215684">
+			</div>
+		</div>
+	</div>
+	<div class="box">
+		<div class="star"><button class="js-star" type="button" id="215685" name="star[]" value="0"></button></div>
+		<p class="chan">19.08.2025 06:02:30</p>
+				<a href="https://opu.peklo.biz/p/25/08/19/1755576150-c71f3.jpeg" class="inbox-wrap swipebox" rel="gallery"><img src="https://opu.peklo.biz/p/25/08/19/thumbs/1755576150-c71f3.jpeg" class="inbox"></a>
+		<div class="pod pod2">601.1 kB .jpeg [1024&nbsp;x&nbsp;1024&nbsp;px]</div>
+		<div class="pod">
+			<input type="hidden" id="htmlcode_215685" value="&lt;img src=&quot;https://opu.peklo.biz/p/25/08/19/1755576150-c71f3.jpeg&quot;&gt;" /><button class="copy-btn width45" type="button" data-target="htmlcode_215685">&lt;img&gt;</button>
+			<input type="hidden" id="html_215685" value="https://opu.peklo.biz/p/25/08/19/1755576150-c71f3.jpeg" /><button class="copy-btn width35" type="button" data-target="html_215685">URL</button>
+			<input type="hidden" id="link_215685" value="&lt;a href=&quot;https://opu.peklo.biz/p/25/08/19/1755576150-c71f3.jpeg&quot;&gt;1755576150-c71f3.jpeg&lt;/a&gt;" /><button class="copy-btn width70" type="button" data-target="link_215685">&lt;a href&gt;</button>
+			<div class="pod1">
+				<input type="checkbox" id="id_215685" name="item[]" value="215685">
+			</div>
+		</div>
+	</div>
+	<div class="box">
+		<div class="star"><button class="js-star" type="button" id="215686" name="star[]" value="0"></button></div>
+		<p class="chan">19.08.2025 06:02:30</p>
+				<a href="https://opu.peklo.biz/p/25/08/19/1755576150-d1520.jpeg" class="inbox-wrap swipebox" rel="gallery"><img src="https://opu.peklo.biz/p/25/08/19/thumbs/1755576150-d1520.jpeg" class="inbox"></a>
+		<div class="pod pod2">301.9 kB .jpeg [1080&nbsp;x&nbsp;2372&nbsp;px]</div>
+		<div class="pod">
+			<input type="hidden" id="htmlcode_215686" value="&lt;img src=&quot;https://opu.peklo.biz/p/25/08/19/1755576150-d1520.jpeg&quot;&gt;" /><button class="copy-btn width45" type="button" data-target="htmlcode_215686">&lt;img&gt;</button>
+			<input type="hidden" id="html_215686" value="https://opu.peklo.biz/p/25/08/19/1755576150-d1520.jpeg" /><button class="copy-btn width35" type="button" data-target="html_215686">URL</button>
+			<input type="hidden" id="link_215686" value="&lt;a href=&quot;https://opu.peklo.biz/p/25/08/19/1755576150-d1520.jpeg&quot;&gt;1755576150-d1520.jpeg&lt;/a&gt;" /><button class="copy-btn width70" type="button" data-target="link_215686">&lt;a href&gt;</button>
+			<div class="pod1">
+				<input type="checkbox" id="id_215686" name="item[]" value="215686">
+			</div>
+		</div>
+	</div>
+	</div>
+
+
+<br clear="all">
+
+	<div class="pagesbottom">
+		Vybrané:
+		<button class="button" type="submit" name="tl_download" id="tl_download_bottom" style="width: 64px;">stáhnout</button>
+		<button class="button" type="submit" name="tl_smazat" id="tl_smazat_bottom" style="width: 64px;">smazat</button>
+		&nbsp;&nbsp;
+		<button name="collect_htmlcode_checked_up" type="button" data-target="htmlcode_" class="copy-btn" style="width: 64px;">&lt;img&gt;</button>
+		<button name="collect_html_checked_up" type="button" data-target="html_" class="copy-btn" style="width: 64px;">URL</button>
+		<button name="collect_link_checked_up" type="button" data-target="link_" class="copy-btn" style="width: 64px;">&lt;a href&gt;</button>
+	</div>
+
+	<div class="pagidown">
+	
+<div class="pagination">
+<label class="vybrana">1</label><label><a href="?page=userpanel&amp;recordStart=2">2</a></label><label><a href="?page=userpanel&amp;recordStart=3">3</a></label><label><a href="?page=userpanel&amp;recordStart=4">4</a></label><label><a href="?page=userpanel&amp;recordStart=5">5</a></label><label><a href="?page=userpanel&amp;recordStart=6">6</a></label><label><a href="?page=userpanel&amp;recordStart=7">7</a></label><label>...</label><label><a href="?page=userpanel&amp;recordStart=51">51</a></label><label><a href="?page=userpanel&amp;recordStart=2">&#9654;</a></label></div>
+
+	</div>
+
+<div class="pkl"><a href="?page=faq" class="opu">F.A.Q.</a> &nbsp;&nbsp;&nbsp; <a href="https://peklo.biz" class="opu"><font class="pod">P</font>eklo.<font class="pod">B</font>iz</a> </div>
+
+</form>
+
+<!-- Swipebox -->
+<link rel="stylesheet" href="templates/swipebox/swipebox.css">
+<script src="templates/swipebox/jquery.swipebox.js"></script>
+<script type="text/javascript">
+$( document ).ready(function() {
+	/* Basic Gallery */
+	$( '.swipebox' ).swipebox();
+
+	/* Smooth scroll */
+	$( '.scroll' ).on( 'click', function () {
+		$( 'html, body' ).animate( { scrollTop: $( $( this ).attr('href') ).offset().top - 15 }, 750 ); // Go
+		return false;
+	});
+  } );
+</script>
+<!-- /Swipebox -->
+
+
+
+</div>
+<br clear="all">
+
+</div>
+
+</body>
+</html>
